@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Jsonic Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header class="header">
+    <img src="icon.png" alt="Jsonic Icon" class="icon">
+    <h2>Jsonic Settings</h2>
+  </header>
+
+  <h3>Appearance</h3>
+  <p>Choose a syntax-highlight theme for the JSON tree view.</p>
+
+  <div class="issue-config">
+    <div class="config-item">
+      <label>Color theme:</label>
+      <select id="theme">
+        <option value="material">Material</option>
+        <option value="visualstudio">Visual Studio</option>
+        <option value="monokai">Monokai</option>
+        <option value="jetbrains">JetBrains</option>
+        <option value="brackets">Brackets</option>
+        <option value="dracula">Dracula</option>
+        <option value="onedark">One Dark</option>
+        <option value="nord">Nord</option>
+        <option value="gruvbox">Gruvbox</option>
+        <option value="catppuccin">Catppuccin</option>
+        <option value="tokyonight">Tokyo Night</option>
+        <option value="github">GitHub Dark</option>
+      </select>
+    </div>
+
+    <div class="config-item">
+      <label>Quote keys</label>
+      <label class="toggle" title="Wrap object keys in double quotes">
+        <input type="checkbox" id="quoteKeys" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="config-item">
+      <label>Count-only collapse summary</label>
+      <label class="toggle" title="Show only the child count when collapsed, without labels like &#39;items&#39; or &#39;keys&#39;">
+        <input type="checkbox" id="countOnly">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="config-item">
+      <label>Wrap long strings</label>
+      <label class="toggle" title="Allow string values to wrap onto multiple lines instead of scrolling horizontally">
+        <input type="checkbox" id="wrapStrings">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="theme-preview" id="theme-preview">
+      <div class="preview-leaf-row"><span class="preview-key">"name"</span><span class="preview-punct">: </span><span class="preview-string">"Jsonic"</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"version"</span><span class="preview-punct">: </span><span class="preview-number">1</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"active"</span><span class="preview-punct">: </span><span class="preview-boolean">true</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"tag"</span><span class="preview-punct">: </span><span class="preview-null">null</span><span class="preview-punct">,</span></div>
+      <div class="preview-collapsed-row">
+        <span class="preview-toggle">&#10095;</span>
+        <span class="preview-key">"meta"</span><span class="preview-punct">: </span><span class="preview-brace">{</span><span class="preview-summary"> 2 keys </span><span class="preview-brace">}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>
+      <button id="save">Save Settings</button>
+      <button id="reset">Reset to Defaults</button>
+    </div>
+    <a href="https://github.com/JGastager/Headliner-chrome-extension" target="_blank">
+      <svg viewBox="0 0 42 42" width="32" height="32">
+        <path d="M21,0a21,21,0,0,0-6.637,40.927c1.051.192,1.434-.456,1.434-1.013,0-.5-.018-1.819-.028-3.571-5.841,1.269-7.074-2.816-7.074-2.816a5.555,5.555,0,0,0-2.332-3.071c-1.907-1.3.144-1.278.144-1.278a4.413,4.413,0,0,1,3.216,2.165c1.873,3.209,4.914,2.282,6.112,1.746a4.482,4.482,0,0,1,1.333-2.808C12.5,29.752,7.6,27.949,7.6,19.9a8.119,8.119,0,0,1,2.162-5.635,7.549,7.549,0,0,1,.2-5.558s1.764-.565,5.776,2.153a19.879,19.879,0,0,1,10.515,0c4.009-2.718,5.769-2.153,5.769-2.153a7.537,7.537,0,0,1,.209,5.558A8.105,8.105,0,0,1,34.4,19.9c0,8.068-4.91,9.843-9.589,10.362a5.012,5.012,0,0,1,1.426,3.889c0,2.807-.026,5.072-.026,5.76,0,.562.378,1.216,1.444,1.011A21,21,0,0,0,21,0" transform="translate(0 0.001)"/>
+      </svg>
+    </a>
+  </div>
+  <div id="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
