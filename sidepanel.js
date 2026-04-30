@@ -179,8 +179,8 @@ function buildJsonTree(container, value, key, depth, isLast) {
 
 function getRootTypeBadge(value) {
     if (value === null) return 'null';
-    if (Array.isArray(value)) return '[ ]';
-    if (typeof value === 'object') return '{ }';
+    if (Array.isArray(value)) return '[]';
+    if (typeof value === 'object') return '{}';
     return typeof value;
 }
 
@@ -210,7 +210,7 @@ function renderJsonBlocks(jsonBlocks) {
         const tabName = label
             ? (label.length > 22 ? label.slice(0, 22) + '\u2026' : label)
             : `JSON ${i + 1}`;
-        tab.appendChild(document.createTextNode(tabName + '\u00A0'));
+        tab.appendChild(document.createTextNode(tabName));
         tab.appendChild(createSpan('tab-badge', getRootTypeBadge(data)));
         if (i === 0) tab.classList.add('active');
         tabsEl.appendChild(tab);
