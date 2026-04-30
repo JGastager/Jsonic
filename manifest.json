@@ -21,10 +21,18 @@
   "action": {
     "default_title": "Jsonic"
   },
+  "web_accessible_resources": [
+    { "resources": ["themes.json"], "matches": ["<all_urls>"] }
+  ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["json-page.js"],
       "run_at": "document_idle"
     }
   ],

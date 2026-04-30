@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
+:root {
+  --jsonic-bg:      #171717;
+  --jsonic-body:     #303030;
+  --jsonic-hover:   #404040;
+  --jsonic-dimmed:   #707070;
+  --jsonic-muted:   #a0a0a0;
+  --jsonic-text:    #f0f0f0;
+  --jsonic-soft: rgba(255, 255, 255, 0.05);
+  --jsonic-primary: #38bdf8;
+  --jsonic-primary-muted: #38bdf828;
+  --jsonic-primary-hover: #38bdf838;
+}
+
 *,
 *::before,
 *::after {
@@ -14,8 +27,8 @@ body {
     max-width: 600px;
     margin: 0 auto;
     font-size: 14px; 
-    background-color: #171717;
-    color: #f0f0f0;
+    background-color: var(--jsonic-bg);
+    color: var(--jsonic-text);
     font-weight: 400;
 }
 
@@ -33,18 +46,18 @@ header {
 }
 
 h2 {
-    color: #f0f0f0;
+    color: var(--jsonic-text);
 }
 
 h3 {
-    color: #f0f0f0;
+    color: var(--jsonic-text);
     margin-top: 30px;
     margin-bottom: 10px;
     font-size: 1.1em;
 }
 
 p {
-    color: rgba(240, 240, 240, 0.7);
+    color: var(--jsonic-muted);
     font-size: 0.9em;
     margin-bottom: 20px;
 }
@@ -65,16 +78,16 @@ a {
 }
 
 a svg path {
-    fill: #555;
+    fill: var(--jsonic-body);
     transition: fill 0.2s;
 }
 
 a:hover svg path {
-    fill: #888;
+    fill: var(--jsonic-hover);
 }
 
 .issue-config {
-    background: #313131;
+    background: var(--jsonic-body);
     padding: 12px 18px;
     border-radius: 8px;
 }
@@ -83,19 +96,17 @@ a:hover svg path {
     font-family: 'Roboto Mono', 'Consolas', monospace;
     font-size: 13px;
     line-height: 2;
-    background: #1e1e1e;
+    background: var(--jsonic-bg);
     border-radius: 6px;
     padding: 12px 16px;
-    margin-top: 4px;
+    margin-top: 18px;
     margin-bottom: 4px;
-    border: 1px solid #3a3a3a;
     transition: color 0.2s;
 }
 
 .preview-leaf-row {
     display: flex;
     align-items: center;
-    padding-left: 20px;
     line-height: 2;
 }
 
@@ -114,7 +125,7 @@ a:hover svg path {
 }
 
 .preview-summary {
-    color: #546E7A;
+    color: var(--jsonic-muted);
     font-style: italic;
     font-size: 11.5px;
 }
@@ -124,7 +135,7 @@ a:hover svg path {
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    border-bottom: 1px solid #3a3a3a;
+    border-bottom: 1px solid var(--jsonic-soft);
     font-weight: 500;
 }
 
@@ -133,16 +144,16 @@ a:hover svg path {
 }
 
 .config-item label:not(.toggle) {
-    color: #f0f0f0;
+    color: var(--jsonic-text);
     flex: 1;
 }
 
 .config-item select {
     padding: 6px 12px;
-    border: 1px solid #3f3f3f;
+    border: 1px solid transparent;
     border-radius: 4px;
-    background-color: #3f3f3f;
-    color: #f0f0f0;
+    background-color: var(--jsonic-hover);
+    color: var(--jsonic-text);
     cursor: pointer;
     font-size: 0.9em;
     min-width: 120px;
@@ -168,21 +179,21 @@ button {
 }
 
 #save {
-    background-color: #38bdf838;
-    color: #38bdf8;
+    background-color: var(--jsonic-primary-muted);
+    color: var(--jsonic-primary);
 }
 
 #save:hover {
-    background-color: #38bdf848;
+    background-color: var(--jsonic-primary-hover);
 }
 
 #reset {
-    background-color: #313131;
-    color: #f0f0f0;
+    background-color: var(--jsonic-body);
+    color: var(--jsonic-text);
 }
 
 #reset:hover {
-    background-color: #3a3a3a;
+    background-color: var(--jsonic-hover);
 }
 
 #status {
@@ -231,7 +242,7 @@ button {
 .toggle-slider {
     position: absolute;
     inset: 0;
-    background-color: #3a3a3a;
+    background-color: var(--jsonic-hover);
     border-radius: 22px;
     transition: background-color 0.2s;
 }
@@ -243,16 +254,16 @@ button {
     top: 3px;
     width: 16px;
     height: 16px;
-    background: #777;
+    background: var(--jsonic-muted);
     border-radius: 50%;
     transition: transform 0.2s, background-color 0.2s;
 }
 
 .toggle input:checked + .toggle-slider {
-    background-color: #38bdf838;
+    background-color: var(--jsonic-primary-muted);
 }
 
 .toggle input:checked + .toggle-slider::before {
     transform: translateX(18px);
-    background-color: #38bdf8;
+    background-color: var(--jsonic-primary);
 }

@@ -49,6 +49,14 @@
     </div>
 
     <div class="config-item">
+      <label>Color brackets &amp; braces</label>
+      <label class="toggle" title="Apply distinct theme colors to [ ] and { } brackets">
+        <input type="checkbox" id="colorBrackets" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="config-item">
       <label>Wrap long strings</label>
       <label class="toggle" title="Allow string values to wrap onto multiple lines instead of scrolling horizontally">
         <input type="checkbox" id="wrapStrings">
@@ -57,13 +65,15 @@
     </div>
 
     <div class="theme-preview" id="theme-preview">
-      <div class="preview-leaf-row"><span class="preview-key">"name"</span><span class="preview-punct">: </span><span class="preview-string">"Jsonic"</span><span class="preview-punct">,</span></div>
-      <div class="preview-leaf-row"><span class="preview-key">"version"</span><span class="preview-punct">: </span><span class="preview-number">1</span><span class="preview-punct">,</span></div>
-      <div class="preview-leaf-row"><span class="preview-key">"active"</span><span class="preview-punct">: </span><span class="preview-boolean">true</span><span class="preview-punct">,</span></div>
-      <div class="preview-leaf-row"><span class="preview-key">"tag"</span><span class="preview-punct">: </span><span class="preview-null">null</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"name"</span><span class="preview-punct">:&nbsp;</span><span class="preview-string">"Jsonic"</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"version"</span><span class="preview-punct">:&nbsp;</span><span class="preview-number">1</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"active"</span><span class="preview-punct">:&nbsp;</span><span class="preview-boolean">true</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"tag"</span><span class="preview-punct">:&nbsp;</span><span class="preview-null">null</span><span class="preview-punct">,</span></div>
       <div class="preview-collapsed-row">
-        <span class="preview-toggle">&#10095;</span>
-        <span class="preview-key">"meta"</span><span class="preview-punct">: </span><span class="preview-brace">{</span><span class="preview-summary"> 2 keys </span><span class="preview-brace">}</span>
+        <span class="preview-key">"meta"</span><span class="preview-punct">:&nbsp;</span><span class="preview-brace">{</span><span class="preview-summary"> 2 keys </span><span class="preview-brace">}</span>
+      </div>
+      <div class="preview-collapsed-row">
+        <span class="preview-key">"tags"</span><span class="preview-punct">:&nbsp;</span><span class="preview-bracket">[</span><span class="preview-summary"> 3 items </span><span class="preview-bracket">]</span>
       </div>
     </div>
   </div>

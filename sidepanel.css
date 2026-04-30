@@ -4,10 +4,17 @@
 :root {
   /* UI chrome */
   --jsonic-bg:      #171717;
-  --jsonic-nav:     #313131;
+  --jsonic-body:     #303030;
+  --jsonic-hover:   #404040;
+  --jsonic-dimmed:   #707070;
+  --jsonic-muted:   #a0a0a0;
   --jsonic-text:    #f0f0f0;
-  --jsonic-muted:   #546E7A;
-  --jsonic-hover:   rgba(255, 255, 255, 0.055);
+  --jsonic-soft: rgba(255, 255, 255, 0.05);
+  --jsonic-guides: rgba(255, 255, 255, 0.1);
+  --jsonic-guides-hover: rgba(255, 255, 255, 0.2);
+  --jsonic-primary: #38bdf8;
+  --jsonic-primary-muted: #38bdf828;
+  --jsonic-primary-hover: #38bdf838;
 
   /* Material Theme JSON token colors */
   --json-key:     #82AAFF;
@@ -16,9 +23,8 @@
   --json-boolean: #C792EA;
   --json-null:    #FF5370;
   --json-bracket: #89DDFF;
-  --json-brace:   #89DDFF;
+  --json-brace:   #FFCB6B;
   --json-punct:   #89DDFF;
-  --json-toggle:  #546E7A;
 }
 
 *,
@@ -37,7 +43,7 @@ body {
 }
 
 body {
-  background: var(--jsonic-nav);
+  background: var(--jsonic-body);
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 13px;
   font-weight: 400;
@@ -47,17 +53,17 @@ body {
 /* ── Nav ──────────────────────────────────────────── */
 
 nav {
-  background-color: var(--jsonic-nav);
+  background-color: var(--jsonic-body);
   height: 48px;
   width: 100%;
 }
 
 nav ul {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 4px;
   height: 100%;
-  padding: 0 8px;
+  padding: 8px;
   list-style: none;
   overflow-x: auto;
   flex-wrap: nowrap;
@@ -89,17 +95,16 @@ nav ul li {
 
 nav ul li:hover,
 nav ul li.active {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--jsonic-hover);
 }
 
 .tab-badge {
   font-family: 'Roboto Mono', 'Consolas', monospace;
-  font-size: 10px;
-  background: rgba(137, 221, 255, 0.12);
-  color: var(--json-bracket);
-  padding: 1px 5px;
+  font-size: 13px;
+  background: var(--jsonic-primary-muted);
+  color: var(--jsonic-primary);
+  padding: 2px 5px;
   border-radius: 3px;
-  letter-spacing: 0.5px;
 }
 
 /* ── Main ─────────────────────────────────────────── */
@@ -131,7 +136,7 @@ main::-webkit-scrollbar-thumb {
   justify-content: center;
   min-height: 140px;
   height: 100%;
-  color: var(--jsonic-muted);
+  color: var(--jsonic-dimmed);
   text-align: center;
   padding: 24px;
   gap: 10px;
@@ -144,19 +149,19 @@ main::-webkit-scrollbar-thumb {
 
 .empty-state code {
   font-family: 'Roboto Mono', monospace;
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.07);
-  padding: 1px 5px;
+  font-size: 13px;
+  background: var(--jsonic-primary-muted);
+  padding: 2px 5px;
   border-radius: 3px;
-  color: var(--json-bracket);
+  color: var(--jsonic-primary);
 }
 
 /* ── JSON tree ────────────────────────────────────── */
 
 .json-tree {
   font-family: 'Roboto Mono', 'Consolas', monospace;
-  font-size: 12.5px;
-  line-height: 1.65;
+  font-size: 13px;
+  line-height: 20px;
   overflow-x: auto;
 }
 
@@ -181,7 +186,7 @@ main::-webkit-scrollbar-thumb {
 }
 
 .json-row.json-collapsible:hover {
-  background: var(--jsonic-hover);
+  background: var(--jsonic-soft);
 }
 
 /* Token colors */
@@ -198,19 +203,21 @@ main::-webkit-scrollbar-thumb {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 20px;
+  width: 18px;
+  margin-right: 4px;
   height: 1em;
-  color: var(--json-punct);
+  color: var(--json-text);
   user-select: none;
   vertical-align: middle;
   flex-shrink: 0;
+  transform: translate(-1px, -2px);
 }
 
 .json-toggle::before {
   content: '';
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background-color: currentColor;
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpolyline points='96 48 176 128 96 208' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='16'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpolyline points='96 48 176 128 96 208' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='16'/%3E%3C/svg%3E");
@@ -227,7 +234,8 @@ main::-webkit-scrollbar-thumb {
 
 .json-toggle-spacer {
   display: inline-block;
-  width: 20px;
+  width: 18px;
+  margin-right: 4px;
   flex-shrink: 0;
 }
 
@@ -246,17 +254,40 @@ main::-webkit-scrollbar-thumb {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(84, 110, 122, 0.3);
+  background: var(--jsonic-guides);
   pointer-events: none;
 }
 
 .json-children:hover::before {
-  background: rgba(84, 110, 122, 0.55);
+  background: var(--jsonic-guides-hover);
 }
 
 .json-summary {
-  color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
+  color: var(--jsonic-dimmed);
   font-size: 11.5px;
+  font-style: italic;
+}
+
+.json-summary .json-brace,
+.json-summary .json-bracket,
+.json-summary .json-punct {
+  font-style: normal;
+  font-size: 13px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--jsonic-text);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--jsonic-soft);
 }
 

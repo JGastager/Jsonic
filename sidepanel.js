@@ -1,59 +1,11 @@
 ﻿// ── Helpers ────────────────────────────────────────────────────────────────
 
-// ── Themes ────────────────────────────────────────────────────────────────
+// ── Themes (loaded from themes.json) ─────────────────────────────────────
 
-const THEMES = {
-    material: {
-        key: '#82AAFF', string: '#C3E88D', number: '#F78C6C',
-        boolean: '#C792EA', null: '#FF5370', bracket: '#89DDFF', punct: '#89DDFF', toggle: '#546E7A',
-    },
-    visualstudio: {
-        key: '#9CDCFE', string: '#CE9178', number: '#B5CEA8',
-        boolean: '#569CD6', null: '#569CD6', bracket: '#D4D4D4', punct: '#D4D4D4', toggle: '#6A9955',
-    },
-    monokai: {
-        key: '#A6E22E', string: '#E6DB74', number: '#AE81FF',
-        boolean: '#66D9E8', null: '#F92672', bracket: '#F8F8F2', punct: '#F8F8F2', toggle: '#75715E',
-    },
-    jetbrains: {
-        key: '#9876AA', string: '#6A8759', number: '#6897BB',
-        boolean: '#CC7832', null: '#CC7832', bracket: '#A9B7C6', punct: '#A9B7C6', toggle: '#606366',
-    },
-    brackets: {
-        key: '#7FC1CA', string: '#A8FF60', number: '#FF9DA4',
-        boolean: '#FFAD00', null: '#FF6C60', bracket: '#DECDCE', punct: '#DECDCE', toggle: '#777777',
-    },
-    dracula: {
-        key: '#8BE9FD', string: '#F1FA8C', number: '#BD93F9',
-        boolean: '#FF79C6', null: '#FF5555', bracket: '#F8F8F2', punct: '#F8F8F2', toggle: '#6272A4',
-    },
-    onedark: {
-        key: '#61AFEF', string: '#98C379', number: '#D19A66',
-        boolean: '#C678DD', null: '#E06C75', bracket: '#ABB2BF', punct: '#ABB2BF', toggle: '#5C6370',
-    },
-    nord: {
-        key: '#88C0D0', string: '#A3BE8C', number: '#B48EAD',
-        boolean: '#81A1C1', null: '#BF616A', bracket: '#D8DEE9', punct: '#D8DEE9', toggle: '#4C566A',
-    },
-    gruvbox: {
-        key: '#83A598', string: '#B8BB26', number: '#D3869B',
-        boolean: '#FE8019', null: '#FB4934', bracket: '#EBDBB2', punct: '#EBDBB2', toggle: '#665C54',
-    },
-    catppuccin: {
-        key: '#89DCEB', string: '#A6E3A1', number: '#FAB387',
-        boolean: '#CBA6F7', null: '#F38BA8', bracket: '#89B4FA', punct: '#BAC2DE', toggle: '#585B70',
-    },
-    tokyonight: {
-        key: '#7DCFFF', string: '#9ECE6A', number: '#FF9E64',
-        boolean: '#BB9AF7', null: '#F7768E', bracket: '#89DDFF', punct: '#C0CAF5', toggle: '#3B4261',
-    },
-    github: {
-        key: '#79C0FF', string: '#A5D6FF', number: '#F2CC60',
-        boolean: '#FF7B72', null: '#FF7B72', bracket: '#E3B341', punct: '#8B949E', toggle: '#484F58',
-    },
-};
+let THEMES = {};
 
 function applyTheme(themeKey) {
+    currentTheme = themeKey;
     const t = THEMES[themeKey] || THEMES.material;
     const root = document.documentElement.style;
     root.setProperty('--json-key', t.key);
@@ -61,10 +13,9 @@ function applyTheme(themeKey) {
     root.setProperty('--json-number', t.number);
     root.setProperty('--json-boolean', t.boolean);
     root.setProperty('--json-null', t.null);
-    root.setProperty('--json-bracket', t.bracket);
-    root.setProperty('--json-brace', t.bracket);
+    root.setProperty('--json-bracket', SETTINGS.colorBrackets !== false ? t.bracket : t.punct);
+    root.setProperty('--json-brace', SETTINGS.colorBrackets !== false ? t.brace : t.punct);
     root.setProperty('--json-punct', t.punct);
-    root.setProperty('--json-toggle', t.toggle);
 }
 
 function createEl(tag, className) {
@@ -84,7 +35,8 @@ function createSpan(className, text) {
 const AUTO_COLLAPSE_DEPTH = 2;
 
 // Runtime settings (loaded from storage, updated via storage.onChanged)
-let SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false };
+let SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false, colorBrackets: true };
+let currentTheme = 'material';
 
 function applySettings() {
     document.querySelectorAll('.json-tree').forEach(tree => {
@@ -195,14 +147,31 @@ function buildJsonTree(container, value, key, depth, isLast) {
     closingRow.style.display = collapsed ? 'none' : '';
     container.appendChild(closingRow);
 
+    // Store references so siblings can be toggled via shift+click
+    row._jsonCollapsible = { toggle, summary, childContainer, closingRow };
+
     // Click handler – toggle expand/collapse
     row.addEventListener('click', (e) => {
         e.stopPropagation();
         const isCollapsed = childContainer.style.display === 'none';
-        childContainer.style.display = isCollapsed ? '' : 'none';
-        closingRow.style.display = isCollapsed ? '' : 'none';
-        summary.style.display = isCollapsed ? 'none' : 'inline';
-        toggle.classList.toggle('open', isCollapsed);
+
+        if (e.shiftKey) {
+            // Toggle all collapsibles in the same parent scope to match this one
+            Array.from(container.children)
+                .filter(el => el.classList.contains('json-collapsible') && el._jsonCollapsible)
+                .forEach(sibling => {
+                    const c = sibling._jsonCollapsible;
+                    c.childContainer.style.display = isCollapsed ? '' : 'none';
+                    c.closingRow.style.display = isCollapsed ? '' : 'none';
+                    c.summary.style.display = isCollapsed ? 'none' : 'inline';
+                    c.toggle.classList.toggle('open', isCollapsed);
+                });
+        } else {
+            childContainer.style.display = isCollapsed ? '' : 'none';
+            closingRow.style.display = isCollapsed ? '' : 'none';
+            summary.style.display = isCollapsed ? 'none' : 'inline';
+            toggle.classList.toggle('open', isCollapsed);
+        }
     });
 }
 
@@ -308,12 +277,17 @@ function refresh() {
 // ── Boot ───────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    chrome.storage.sync.get(['jsonicTheme', 'jsonicSettings'], (data) => {
-        applyTheme(data.jsonicTheme || 'material');
-        if (data.jsonicSettings) Object.assign(SETTINGS, data.jsonicSettings);
-        applySettings();
-    });
-    refresh();
+    fetch(chrome.runtime.getURL('themes.json'))
+        .then(r => r.json())
+        .then(themes => {
+            THEMES = themes;
+            chrome.storage.sync.get(['jsonicTheme', 'jsonicSettings'], (data) => {
+                if (data.jsonicSettings) Object.assign(SETTINGS, data.jsonicSettings);
+                applyTheme(data.jsonicTheme || 'material');
+                applySettings();
+                refresh();
+            });
+        });
 });
 
 // Re-apply theme/settings if changed in options while panel is open
@@ -321,6 +295,7 @@ chrome.storage.onChanged.addListener((changes) => {
     if (changes.jsonicTheme) applyTheme(changes.jsonicTheme.newValue);
     if (changes.jsonicSettings) {
         Object.assign(SETTINGS, changes.jsonicSettings.newValue);
+        applyTheme(currentTheme);
         refresh();
     }
 });
