@@ -159,7 +159,8 @@
 
 .json-toggle.open::before { transform: rotate(90deg); }
 
-.json-children { position: relative; }
+.json-children,
+.json-closing { position: relative; }
 
 .json-children::before {
   content: '';
@@ -172,7 +173,31 @@
   pointer-events: none;
 }
 
-.json-children:hover::before { background: var(--jp-guides-hover); }
+.json-closing::before {
+  content: '';
+  position: absolute;
+  left: var(--indent-x, 7px);
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  height: 12px;
+  border-left: 1px solid var(--jp-guides);
+  border-bottom: 1px solid var(--jp-guides);
+  border-radius: 0 0 0 2px;
+  pointer-events: none;
+}
+
+.json-children .json-closing::before {
+  left: calc(var(--indent-x, 7px) + 20px);
+}
+
+.json-children:hover::before {
+  background: var(--jp-guides-hover);
+}
+
+.json-children:hover + .json-closing::before {
+  border-color: var(--jp-guides-hover);
+}
 
 .json-summary {
   color: var(--jp-muted);
@@ -288,6 +313,17 @@
         const openChar = isArray ? '[' : '{';
         const closeChar = isArray ? ']' : '}';
         const bracketClass = isArray ? 'json-bracket' : 'json-brace';
+
+        // Empty array/object — render inline without a collapsible
+        if (count === 0) {
+            row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
+            row.appendChild(createSpan(bracketClass, openChar));
+            row.appendChild(createSpan(bracketClass, closeChar));
+            if (!isLast) row.appendChild(createSpan('json-punct', ','));
+            container.appendChild(row);
+            return;
+        }
+
         const collapsed = depth >= AUTO_COLLAPSE_DEPTH;
 
         const toggle = createSpan('json-toggle', '');
@@ -327,6 +363,7 @@
 
         const closingRow = createEl('div', 'json-row json-closing');
         closingRow.style.paddingLeft = `${depth * 20}px`;
+        closingRow.appendChild(createSpan('json-toggle-spacer', ''));
         closingRow.appendChild(createSpan(bracketClass, closeChar));
         if (!isLast) closingRow.appendChild(createSpan('json-punct', ','));
         closingRow.style.display = collapsed ? 'none' : '';

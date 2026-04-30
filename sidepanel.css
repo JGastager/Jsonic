@@ -251,7 +251,8 @@ main::-webkit-scrollbar-thumb {
   transform: rotate(90deg);
 }
 
-.json-children {
+.json-children,
+.json-closing {
   position: relative;
 }
 
@@ -266,8 +267,30 @@ main::-webkit-scrollbar-thumb {
   pointer-events: none;
 }
 
+.json-closing::before {
+  content: '';
+  position: absolute;
+  left: var(--indent-x, 7px);
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  height: 12px;
+  border-left: 1px solid var(--jp-guides);
+  border-bottom: 1px solid var(--jp-guides);
+  border-radius: 0 0 0 2px;
+  pointer-events: none;
+}
+
+.json-children .json-closing::before {
+  left: calc(var(--indent-x, 7px) + 20px);
+}
+
 .json-children:hover::before {
   background: var(--jp-guides-hover);
+}
+
+.json-children:hover + .json-closing::before {
+  border-color: var(--jp-guides-hover);
 }
 
 .json-summary {

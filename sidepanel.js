@@ -98,9 +98,20 @@ function buildJsonTree(container, value, key, depth, isLast) {
     const openChar = isArray ? '[' : '{';
     const closeChar = isArray ? ']' : '}';
     const bracketClass = isArray ? 'json-bracket' : 'json-brace';
+
+    // Empty array/object â€” render inline without a collapsible
+    if (count === 0) {
+        row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
+        row.appendChild(createSpan(bracketClass, openChar));
+        row.appendChild(createSpan(bracketClass, closeChar));
+        if (!isLast) row.appendChild(createSpan('json-punct', ','));
+        container.appendChild(row);
+        return;
+    }
+
     const collapsed = depth >= AUTO_COLLAPSE_DEPTH;
 
-    // Expand/collapse toggle arrow — always first in the row
+    // Expand/collapse toggle arrow always first in the row
     const toggle = createSpan('json-toggle', '');
     if (!collapsed) toggle.classList.add('open');
     row.insertBefore(toggle, row.firstChild);
@@ -142,6 +153,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
     // Closing bracket on its own line
     const closingRow = createEl('div', 'json-row json-closing');
     closingRow.style.paddingLeft = `${depth * 20}px`;
+    closingRow.appendChild(createSpan('json-toggle-spacer', ''));
     closingRow.appendChild(createSpan(bracketClass, closeChar));
     if (!isLast) closingRow.appendChild(createSpan('json-punct', ','));
     closingRow.style.display = collapsed ? 'none' : '';
@@ -150,7 +162,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
     // Store references so siblings can be toggled via shift+click
     row._jsonCollapsible = { toggle, summary, childContainer, closingRow };
 
-    // Click handler – toggle expand/collapse
+    // Click handler â€” toggle expand/collapse
     row.addEventListener('click', (e) => {
         e.stopPropagation();
         const isCollapsed = childContainer.style.display === 'none';
