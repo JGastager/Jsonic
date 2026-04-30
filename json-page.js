@@ -1,4 +1,4 @@
-// json-page.js — Renders raw JSON file tabs as the Jsonic styled tree
+// json-page.js — Renders raw JSON file tabs as the JSON Parse styled tree
 (function () {
     'use strict';
 
@@ -35,19 +35,19 @@
         const css = `
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
 
-#jsonic-page-root {
-  --jsonic-bg:      #171717;
-  --jsonic-body:     #303030;
-  --jsonic-hover:   #404040;
-  --jsonic-dimmed:   #707070;
-  --jsonic-muted:   #a0a0a0;
-  --jsonic-text:    #f0f0f0;
-  --jsonic-soft: rgba(255, 255, 255, 0.05);
-  --jsonic-guides: rgba(255, 255, 255, 0.1);
-  --jsonic-guides-hover: rgba(255, 255, 255, 0.2);
-  --jsonic-primary: #38bdf8;
-  --jsonic-primary-muted: #38bdf828;
-  --jsonic-primary-hover: #38bdf838;
+#jp-page-root {
+  --jp-bg:      #171717;
+  --jp-body:     #303030;
+  --jp-hover:   #404040;
+  --jp-dimmed:   #707070;
+  --jp-muted:   #a0a0a0;
+  --jp-text:    #f0f0f0;
+  --jp-soft: rgba(255, 255, 255, 0.05);
+  --jp-guides: rgba(255, 255, 255, 0.1);
+  --jp-guides-hover: rgba(255, 255, 255, 0.2);
+  --jp-primary: #38bdf8;
+  --jp-primary-muted: #38bdf828;
+  --jp-primary-hover: #38bdf838;
   --json-key:     ${t.key};
   --json-string:  ${t.string};
   --json-number:  ${t.number};
@@ -56,12 +56,12 @@
   --json-bracket: ${bracketColor};
   --json-brace:   ${braceColor};
   --json-punct:   ${t.punct};
-  --json-toggle:  var(--jsonic-text);
+  --json-toggle:  var(--jp-text);
 
   position: fixed;
   inset: 0;
-  background: var(--jsonic-bg);
-  color: var(--jsonic-text);
+  background: var(--jp-bg);
+  color: var(--jp-text);
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 13px;
   display: flex;
@@ -71,23 +71,23 @@
   box-sizing: border-box;
 }
 
-#jsonic-page-root *, #jsonic-page-root *::before, #jsonic-page-root *::after {
+#jp-page-root *, #jp-page-root *::before, #jp-page-root *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-#jsonic-page-body {
+#jp-page-body {
   flex: 1;
   overflow-y: auto;
   overflow-x: auto;
   padding: 14px 16px 24px;
   scrollbar-width: thin;
-  scrollbar-color: var(--jsonic-muted) transparent;
+  scrollbar-color: var(--jp-muted) transparent;
 }
 
-#jsonic-page-body::-webkit-scrollbar { width: 5px; height: 5px; }
-#jsonic-page-body::-webkit-scrollbar-thumb { background: var(--jsonic-muted); border-radius: 3px; }
+#jp-page-body::-webkit-scrollbar { width: 5px; height: 5px; }
+#jp-page-body::-webkit-scrollbar-thumb { background: var(--jp-muted); border-radius: 3px; }
 
 .json-tree {
   font-family: 'Roboto Mono', 'Consolas', monospace;
@@ -106,7 +106,7 @@
 }
 
 .json-row.json-collapsible { cursor: pointer; }
-.json-row.json-collapsible:hover { background: var(--jsonic-soft); }
+.json-row.json-collapsible:hover { background: var(--jp-soft); }
 
 .json-key     { color: var(--json-key); }
 .json-string  { color: var(--json-string); }
@@ -168,14 +168,14 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: var(--jsonic-guides);
+  background: var(--jp-guides);
   pointer-events: none;
 }
 
-.json-children:hover::before { background: var(--jsonic-guides-hover); }
+.json-children:hover::before { background: var(--jp-guides-hover); }
 
 .json-summary {
-  color: var(--jsonic-muted);
+  color: var(--jp-muted);
   font-size: 11.5px;
   font-style: italic;
 }
@@ -197,7 +197,7 @@
   align-items: center;
   padding: 6px !important;
   background: transparent;
-  color: var(--jsonic-text);
+  color: var(--jp-text);
   border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
@@ -206,11 +206,11 @@
 }
 
 .btn:hover {
-  background-color: var(--jsonic-soft);
+  background-color: var(--jp-soft);
 }
 
 .i-gear {
-  background-color: var(--jsonic-text);
+  background-color: var(--jp-text);
   height: 18px;
   width: 18px;
   -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzAwMDAwMCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxwYXRoIGQ9Ik0xMjgsODBhNDgsNDgsMCwxLDAsNDgsNDhBNDguMDUsNDguMDUsMCwwLDAsMTI4LDgwWm0wLDgwYTMyLDMyLDAsMSwxLDMyLTMyQTMyLDMyLDAsMCwxLDEyOCwxNjBabTEwOS45NC01Mi43OWE4LDgsMCwwLDAtMy44OS01LjRsLTI5LjgzLTE3LS4xMi0zMy42MmE4LDgsMCwwLDAtMi44My02LjA4LDExMS45MSwxMTEuOTEsMCwwLDAtMzYuNzItMjAuNjcsOCw4LDAsMCwwLTYuNDYuNTlMMTI4LDQxLjg1LDk3Ljg4LDI1YTgsOCwwLDAsMC02LjQ3LS42QTExMi4xLDExMi4xLDAsMCwwLDU0LjczLDQ1LjE1YTgsOCwwLDAsMC0yLjgzLDYuMDdsLS4xNSwzMy42NS0yOS44MywxN2E4LDgsMCwwLDAtMy44OSw1LjQsMTA2LjQ3LDEwNi40NywwLDAsMCwwLDQxLjU2LDgsOCwwLDAsMCwzLjg5LDUuNGwyOS44MywxNywuMTIsMzMuNjJhOCw4LDAsMCwwLDIuODMsNi4wOCwxMTEuOTEsMTExLjkxLDAsMCwwLDM2LjcyLDIwLjY3LDgsOCwwLDAsMCw2LjQ2LS41OUwxMjgsMjE0LjE1LDE1OC4xMiwyMzFhNy45MSw3LjkxLDAsMCwwLDMuOSwxLDguMDksOC4wOSwwLDAsMCwyLjU3LS40MiwxMTIuMSwxMTIuMSwwLDAsMCwzNi42OC0yMC43Myw4LDgsMCwwLDAsMi44My02LjA3bC4xNS0zMy42NSwyOS44My0xN2E4LDgsMCwwLDAsMy44OS01LjRBMTA2LjQ3LDEwNi40NywwLDAsMCwyMzcuOTQsMTA3LjIxWm0tMTUsMzQuOTEtMjguNTcsMTYuMjVhOCw4LDAsMCwwLTMsM2MtLjU4LDEtMS4xOSwyLjA2LTEuODEsMy4wNmE3Ljk0LDcuOTQsMCwwLDAtMS4yMiw0LjIxbC0uMTUsMzIuMjVhOTUuODksOTUuODksMCwwLDEtMjUuMzcsMTQuM0wxMzQsMTk5LjEzYTgsOCwwLDAsMC0zLjkxLTFoLS4xOWMtMS4yMSwwLTIuNDMsMC0zLjY0LDBhOC4wOCw4LjA4LDAsMCwwLTQuMSwxbC0yOC44NCwxNi4xQTk2LDk2LDAsMCwxLDY3Ljg4LDIwMWwtLjExLTMyLjJhOCw4LDAsMCwwLTEuMjItNC4yMmMtLjYyLTEtMS4yMy0yLTEuOC0zLjA2YTguMDksOC4wOSwwLDAsMC0zLTMuMDZsLTI4LjYtMTYuMjlhOTAuNDksOTAuNDksMCwwLDEsMC0yOC4yNkw2MS42Nyw5Ny42M2E4LDgsMCwwLDAsMy0zYy41OC0xLDEuMTktMi4wNiwxLjgxLTMuMDZhNy45NCw3Ljk0LDAsMCwwLDEuMjItNC4yMWwuMTUtMzIuMjVhOTUuODksOTUuODksMCwwLDEsMjUuMzctMTQuM0wxMjIsNTYuODdhOCw4LDAsMCwwLDQuMSwxYzEuMjEsMCwyLjQzLDAsMy42NCwwYTguMDgsOC4wOCwwLDAsMCw0LjEtMWwyOC44NC0xNi4xQTk2LDk2LDAsMCwxLDE4OC4xMiw1NWwuMTEsMzIuMmE4LDgsMCwwLDAsMS4yMiw0LjIyYy42MiwxLDEuMjMsMiwxLjgsMy4wNmE4LjA5LDguMDksMCwwLDAsMywzLjA2bDI4LjYsMTYuMjlBOTAuNDksOTAuNDksMCwwLDEsMjIyLjksMTQyLjEyWiI+PC9wYXRoPjwvc3ZnPg==");
@@ -364,11 +364,11 @@
 
         // Build root container
         const root = createEl('div');
-        root.id = 'jsonic-page-root';
+        root.id = 'jp-page-root';
 
         // Scrollable body
         const body = createEl('div');
-        body.id = 'jsonic-page-body';
+        body.id = 'jp-page-body';
 
         const tree = createEl('div', 'json-tree');
         if (settings.wrapStrings) tree.classList.add('wrap-strings');
@@ -392,7 +392,7 @@
         document.body.appendChild(root);
 
         // Update page title
-        document.title = location.pathname.split('/').pop() || 'JSON — Jsonic';
+        document.title = location.pathname.split('/').pop() || 'JSON Parse';
     }
 
     // ── Load settings then render ────────────────────────────────────────────
@@ -400,19 +400,19 @@
         .then(r => r.json())
         .then(themes => {
             THEMES = themes;
-            chrome.storage.sync.get(['jsonicTheme', 'jsonicSettings'], (data) => {
-                const theme = data.jsonicTheme || 'material';
-                const settings = data.jsonicSettings || {};
+            chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings'], (data) => {
+                const theme = data.jsonParseTheme || 'material';
+                const settings = data.jsonParseSettings || {};
                 renderPage(theme, settings);
             });
         });
 
     // Re-render if settings change while the tab is open
     chrome.storage.onChanged.addListener((changes) => {
-        if (changes.jsonicTheme || changes.jsonicSettings) {
-            chrome.storage.sync.get(['jsonicTheme', 'jsonicSettings'], (data) => {
-                const theme = data.jsonicTheme || 'material';
-                const settings = data.jsonicSettings || {};
+        if (changes.jsonParseTheme || changes.jsonParseSettings) {
+            chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings'], (data) => {
+                const theme = data.jsonParseTheme || 'material';
+                const settings = data.jsonParseSettings || {};
                 renderPage(theme, settings);
             });
         }

@@ -1,4 +1,4 @@
-﻿let THEMES = {};
+let THEMES = {};
 
 const DEFAULT_THEME = 'material';
 const DEFAULT_SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false, colorBrackets: true };
@@ -37,9 +37,9 @@ function getCurrentSettings() {
 }
 
 function loadSettings() {
-    chrome.storage.sync.get(['jsonicTheme', 'jsonicSettings'], (data) => {
-        const theme = data.jsonicTheme || DEFAULT_THEME;
-        const settings = Object.assign({}, DEFAULT_SETTINGS, data.jsonicSettings || {});
+    chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings'], (data) => {
+        const theme = data.jsonParseTheme || DEFAULT_THEME;
+        const settings = Object.assign({}, DEFAULT_SETTINGS, data.jsonParseSettings || {});
         document.getElementById('theme').value = theme;
         document.getElementById('quoteKeys').checked = settings.quoteKeys;
         document.getElementById('countOnly').checked = settings.countOnly;
@@ -52,7 +52,7 @@ function loadSettings() {
 function saveSettings() {
     const theme = document.getElementById('theme').value;
     const settings = getCurrentSettings();
-    chrome.storage.sync.set({ jsonicTheme: theme, jsonicSettings: settings }, () => {
+    chrome.storage.sync.set({ jsonParseTheme: theme, jsonParseSettings: settings }, () => {
         const status = document.getElementById('status');
         status.textContent = 'Settings saved!';
         status.classList.add('success', 'show');
@@ -64,7 +64,7 @@ function saveSettings() {
 }
 
 function resetSettings() {
-    chrome.storage.sync.set({ jsonicTheme: DEFAULT_THEME, jsonicSettings: DEFAULT_SETTINGS }, () => {
+    chrome.storage.sync.set({ jsonParseTheme: DEFAULT_THEME, jsonParseSettings: DEFAULT_SETTINGS }, () => {
         loadSettings();
         const status = document.getElementById('status');
         status.textContent = 'Reset to defaults!';

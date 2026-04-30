@@ -1,6 +1,6 @@
 ﻿{
   "manifest_version": 3,
-  "name": "Jsonic",
+  "name": "JSON Parse",
   "version": "1.0.0",
   "description": "Instantly explore and visualize JSON found in <pre> tags on any webpage.",
   "permissions": [
@@ -19,7 +19,7 @@
   },
   "options_page": "options.html",
   "action": {
-    "default_title": "Jsonic"
+    "default_title": "JSON Parse"
   },
   "web_accessible_resources": [
     { "resources": ["themes.json"], "matches": ["<all_urls>"] }

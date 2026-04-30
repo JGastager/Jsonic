@@ -1,6 +1,6 @@
-﻿// ── Helpers ────────────────────────────────────────────────────────────────
+// -- Helpers ----------------------------------------------------------------
 
-// ── Themes (loaded from themes.json) ─────────────────────────────────────
+// -- Themes (loaded from themes.json) -------------------------------------
 
 let THEMES = {};
 
@@ -30,7 +30,7 @@ function createSpan(className, text) {
     return el;
 }
 
-// ── Tree builder ───────────────────────────────────────────────────────────
+// -- Tree builder -----------------------------------------------------------
 // Objects and arrays auto-collapse at this depth and beyond.
 const AUTO_COLLAPSE_DEPTH = 2;
 
@@ -59,7 +59,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
         row.appendChild(createSpan('json-punct', ': '));
     }
 
-    // ── Leaf values ──────────────────────────────────────────────────────
+    // -- Leaf values ------------------------------------------------------
     if (value === null) {
         row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
         row.appendChild(createSpan('json-null', 'null'));
@@ -91,7 +91,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
         return;
     }
 
-    // ── Collapsible: object or array ────────────────────────────────────
+    // -- Collapsible: object or array ------------------------------------
     const isArray = Array.isArray(value);
     const childKeys = isArray ? null : Object.keys(value);
     const count = isArray ? value.length : childKeys.length;
@@ -100,7 +100,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
     const bracketClass = isArray ? 'json-bracket' : 'json-brace';
     const collapsed = depth >= AUTO_COLLAPSE_DEPTH;
 
-    // Expand/collapse toggle arrow — always first in the row
+    // Expand/collapse toggle arrow � always first in the row
     const toggle = createSpan('json-toggle', '');
     if (!collapsed) toggle.classList.add('open');
     row.insertBefore(toggle, row.firstChild);
@@ -150,7 +150,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
     // Store references so siblings can be toggled via shift+click
     row._jsonCollapsible = { toggle, summary, childContainer, closingRow };
 
-    // Click handler – toggle expand/collapse
+    // Click handler � toggle expand/collapse
     row.addEventListener('click', (e) => {
         e.stopPropagation();
         const isCollapsed = childContainer.style.display === 'none';
@@ -175,7 +175,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
     });
 }
 
-// ── Tab/panel rendering ───────────────────────────────────────────────────
+// -- Tab/panel rendering ---------------------------------------------------
 
 function getRootTypeBadge(value) {
     if (value === null) return 'null';
@@ -205,7 +205,7 @@ function renderJsonBlocks(jsonBlocks) {
     }
 
     jsonBlocks.forEach(({ data, label }, i) => {
-        // ── Tab ──────────────────────────────────────────────────────────
+        // -- Tab ----------------------------------------------------------
         const tab = document.createElement('li');
         const tabName = label
             ? (label.length > 22 ? label.slice(0, 22) + '\u2026' : label)
@@ -215,7 +215,7 @@ function renderJsonBlocks(jsonBlocks) {
         if (i === 0) tab.classList.add('active');
         tabsEl.appendChild(tab);
 
-        // ── Panel ─────────────────────────────────────────────────────────
+        // -- Panel ---------------------------------------------------------
         const panel = createEl('section', 'json-panel');
         panel.style.display = i === 0 ? '' : 'none';
 
@@ -224,7 +224,7 @@ function renderJsonBlocks(jsonBlocks) {
         panel.appendChild(tree);
         panelsEl.appendChild(panel);
 
-        // ── Tab click ─────────────────────────────────────────────────────
+        // -- Tab click -----------------------------------------------------
         tab.addEventListener('click', () => {
             tabsEl.querySelectorAll('li').forEach(t => t.classList.remove('active'));
             panelsEl.querySelectorAll('.json-panel').forEach(p => { p.style.display = 'none'; });
@@ -234,7 +234,7 @@ function renderJsonBlocks(jsonBlocks) {
     });
 }
 
-// ── Data extraction ───────────────────────────────────────────────────────
+// -- Data extraction -------------------------------------------------------
 
 function refresh() {
     chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
@@ -274,16 +274,16 @@ function refresh() {
     });
 }
 
-// ── Boot ───────────────────────────────────────────────────────────────────
+// -- Boot -------------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch(chrome.runtime.getURL('themes.json'))
         .then(r => r.json())
         .then(themes => {
             THEMES = themes;
-            chrome.storage.sync.get(['jsonicTheme', 'jsonicSettings'], (data) => {
-                if (data.jsonicSettings) Object.assign(SETTINGS, data.jsonicSettings);
-                applyTheme(data.jsonicTheme || 'material');
+            chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings'], (data) => {
+                if (data.jsonParseSettings) Object.assign(SETTINGS, data.jsonParseSettings);
+                applyTheme(data.jsonParseTheme || 'material');
                 applySettings();
                 refresh();
             });
@@ -292,9 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Re-apply theme/settings if changed in options while panel is open
 chrome.storage.onChanged.addListener((changes) => {
-    if (changes.jsonicTheme) applyTheme(changes.jsonicTheme.newValue);
-    if (changes.jsonicSettings) {
-        Object.assign(SETTINGS, changes.jsonicSettings.newValue);
+    if (changes.jsonParseTheme) applyTheme(changes.jsonParseTheme.newValue);
+    if (changes.jsonParseSettings) {
+        Object.assign(SETTINGS, changes.jsonParseSettings.newValue);
         applyTheme(currentTheme);
         refresh();
     }

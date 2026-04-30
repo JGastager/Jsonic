@@ -1,4 +1,4 @@
-﻿// Jsonic — SPA support: detect <pre> DOM changes and client-side navigation
+// JSON Parse SPA support: detect <pre> DOM changes and client-side navigation
 
 let _debounceTimer = null;
 

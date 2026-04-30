@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
 :root {
-  --jsonic-bg:      #171717;
-  --jsonic-body:     #303030;
-  --jsonic-hover:   #404040;
-  --jsonic-dimmed:   #707070;
-  --jsonic-muted:   #a0a0a0;
-  --jsonic-text:    #f0f0f0;
-  --jsonic-soft: rgba(255, 255, 255, 0.05);
-  --jsonic-primary: #38bdf8;
-  --jsonic-primary-muted: #38bdf828;
-  --jsonic-primary-hover: #38bdf838;
+  --jp-bg:      #171717;
+  --jp-body:     #303030;
+  --jp-hover:   #404040;
+  --jp-dimmed:   #707070;
+  --jp-muted:   #a0a0a0;
+  --jp-text:    #f0f0f0;
+  --jp-soft: rgba(255, 255, 255, 0.05);
+  --jp-primary: #38bdf8;
+  --jp-primary-muted: #38bdf828;
+  --jp-primary-hover: #38bdf838;
 }
 
 *,
@@ -27,8 +27,8 @@ body {
     max-width: 600px;
     margin: 0 auto;
     font-size: 14px; 
-    background-color: var(--jsonic-bg);
-    color: var(--jsonic-text);
+    background-color: var(--jp-bg);
+    color: var(--jp-text);
     font-weight: 400;
 }
 
@@ -46,18 +46,18 @@ header {
 }
 
 h2 {
-    color: var(--jsonic-text);
+    color: var(--jp-text);
 }
 
 h3 {
-    color: var(--jsonic-text);
+    color: var(--jp-text);
     margin-top: 30px;
     margin-bottom: 10px;
     font-size: 1.1em;
 }
 
 p {
-    color: var(--jsonic-muted);
+    color: var(--jp-muted);
     font-size: 0.9em;
     margin-bottom: 20px;
 }
@@ -78,16 +78,16 @@ a {
 }
 
 a svg path {
-    fill: var(--jsonic-body);
+    fill: var(--jp-body);
     transition: fill 0.2s;
 }
 
 a:hover svg path {
-    fill: var(--jsonic-hover);
+    fill: var(--jp-hover);
 }
 
 .issue-config {
-    background: var(--jsonic-body);
+    background: var(--jp-body);
     padding: 12px 18px;
     border-radius: 8px;
 }
@@ -96,7 +96,7 @@ a:hover svg path {
     font-family: 'Roboto Mono', 'Consolas', monospace;
     font-size: 13px;
     line-height: 2;
-    background: var(--jsonic-bg);
+    background: var(--jp-bg);
     border-radius: 6px;
     padding: 12px 16px;
     margin-top: 18px;
@@ -125,7 +125,7 @@ a:hover svg path {
 }
 
 .preview-summary {
-    color: var(--jsonic-muted);
+    color: var(--jp-muted);
     font-style: italic;
     font-size: 11.5px;
 }
@@ -135,7 +135,7 @@ a:hover svg path {
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    border-bottom: 1px solid var(--jsonic-soft);
+    border-bottom: 1px solid var(--jp-soft);
     font-weight: 500;
 }
 
@@ -144,7 +144,7 @@ a:hover svg path {
 }
 
 .config-item label:not(.toggle) {
-    color: var(--jsonic-text);
+    color: var(--jp-text);
     flex: 1;
 }
 
@@ -152,8 +152,8 @@ a:hover svg path {
     padding: 6px 12px;
     border: 1px solid transparent;
     border-radius: 4px;
-    background-color: var(--jsonic-hover);
-    color: var(--jsonic-text);
+    background-color: var(--jp-hover);
+    color: var(--jp-text);
     cursor: pointer;
     font-size: 0.9em;
     min-width: 120px;
@@ -179,21 +179,21 @@ button {
 }
 
 #save {
-    background-color: var(--jsonic-primary-muted);
-    color: var(--jsonic-primary);
+    background-color: var(--jp-primary-muted);
+    color: var(--jp-primary);
 }
 
 #save:hover {
-    background-color: var(--jsonic-primary-hover);
+    background-color: var(--jp-primary-hover);
 }
 
 #reset {
-    background-color: var(--jsonic-body);
-    color: var(--jsonic-text);
+    background-color: var(--jp-body);
+    color: var(--jp-text);
 }
 
 #reset:hover {
-    background-color: var(--jsonic-hover);
+    background-color: var(--jp-hover);
 }
 
 #status {
@@ -242,7 +242,7 @@ button {
 .toggle-slider {
     position: absolute;
     inset: 0;
-    background-color: var(--jsonic-hover);
+    background-color: var(--jp-hover);
     border-radius: 22px;
     transition: background-color 0.2s;
 }
@@ -254,16 +254,16 @@ button {
     top: 3px;
     width: 16px;
     height: 16px;
-    background: var(--jsonic-muted);
+    background: var(--jp-muted);
     border-radius: 50%;
     transition: transform 0.2s, background-color 0.2s;
 }
 
 .toggle input:checked + .toggle-slider {
-    background-color: var(--jsonic-primary-muted);
+    background-color: var(--jp-primary-muted);
 }
 
 .toggle input:checked + .toggle-slider::before {
     transform: translateX(18px);
-    background-color: var(--jsonic-primary);
+    background-color: var(--jp-primary);
 }
