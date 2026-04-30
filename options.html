@@ -64,11 +64,19 @@
       </label>
     </div>
 
+    <div class="config-item">
+      <label>Show trailing commas</label>
+      <label class="toggle" title="Show a comma after each value that is not the last in its object or array">
+        <input type="checkbox" id="showCommas" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
     <div class="theme-preview" id="theme-preview">
-      <div class="preview-leaf-row"><span class="preview-key">"name"</span><span class="preview-punct">:&nbsp;</span><span class="preview-string">"JSON Parse"</span><span class="preview-punct">,</span></div>
-      <div class="preview-leaf-row"><span class="preview-key">"version"</span><span class="preview-punct">:&nbsp;</span><span class="preview-number">1</span><span class="preview-punct">,</span></div>
-      <div class="preview-leaf-row"><span class="preview-key">"active"</span><span class="preview-punct">:&nbsp;</span><span class="preview-boolean">true</span><span class="preview-punct">,</span></div>
-      <div class="preview-leaf-row"><span class="preview-key">"tag"</span><span class="preview-punct">:&nbsp;</span><span class="preview-null">null</span><span class="preview-punct">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"name"</span><span class="preview-punct">:&nbsp;</span><span class="preview-string">"JSON Parse"</span><span class="preview-punct preview-comma">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"version"</span><span class="preview-punct">:&nbsp;</span><span class="preview-number">1</span><span class="preview-punct preview-comma">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"active"</span><span class="preview-punct">:&nbsp;</span><span class="preview-boolean">true</span><span class="preview-punct preview-comma">,</span></div>
+      <div class="preview-leaf-row"><span class="preview-key">"tag"</span><span class="preview-punct">:&nbsp;</span><span class="preview-null">null</span><span class="preview-punct preview-comma">,</span></div>
       <div class="preview-collapsed-row">
         <span class="preview-key">"meta"</span><span class="preview-punct">:&nbsp;</span><span class="preview-brace">{</span><span class="preview-summary"> 2 keys </span><span class="preview-brace">}</span>
       </div>

@@ -35,7 +35,7 @@ function createSpan(className, text) {
 const AUTO_COLLAPSE_DEPTH = 2;
 
 // Runtime settings (loaded from storage, updated via storage.onChanged)
-let SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false, colorBrackets: true };
+let SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false, colorBrackets: true, showCommas: true };
 let currentTheme = 'material';
 
 function applySettings() {
@@ -63,21 +63,21 @@ function buildJsonTree(container, value, key, depth, isLast) {
     if (value === null) {
         row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
         row.appendChild(createSpan('json-null', 'null'));
-        if (!isLast) row.appendChild(createSpan('json-punct', ','));
+        if (!isLast && SETTINGS.showCommas !== false) row.appendChild(createSpan('json-punct', ','));
         container.appendChild(row);
         return;
     }
     if (typeof value === 'boolean') {
         row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
         row.appendChild(createSpan('json-boolean', String(value)));
-        if (!isLast) row.appendChild(createSpan('json-punct', ','));
+        if (!isLast && SETTINGS.showCommas !== false) row.appendChild(createSpan('json-punct', ','));
         container.appendChild(row);
         return;
     }
     if (typeof value === 'number') {
         row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
         row.appendChild(createSpan('json-number', String(value)));
-        if (!isLast) row.appendChild(createSpan('json-punct', ','));
+        if (!isLast && SETTINGS.showCommas !== false) row.appendChild(createSpan('json-punct', ','));
         container.appendChild(row);
         return;
     }
@@ -86,7 +86,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
         const display = value.length > 300 ? value.slice(0, 300) + '\u2026' : value;
         row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
         row.appendChild(createSpan('json-string', `"${display}"`));
-        if (!isLast) row.appendChild(createSpan('json-punct', ','));
+        if (!isLast && SETTINGS.showCommas !== false) row.appendChild(createSpan('json-punct', ','));
         container.appendChild(row);
         return;
     }
@@ -104,7 +104,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
         row.insertBefore(createSpan('json-toggle-spacer', ''), row.firstChild);
         row.appendChild(createSpan(bracketClass, openChar));
         row.appendChild(createSpan(bracketClass, closeChar));
-        if (!isLast) row.appendChild(createSpan('json-punct', ','));
+        if (!isLast && SETTINGS.showCommas !== false) row.appendChild(createSpan('json-punct', ','));
         container.appendChild(row);
         return;
     }
@@ -126,7 +126,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
             : `\u00A0${count}\u00A0${count === 1 ? 'key' : 'keys'}\u00A0`;
     summary.appendChild(document.createTextNode(label));
     summary.appendChild(createSpan(bracketClass, closeChar));
-    if (!isLast) summary.appendChild(createSpan('json-punct', ','));
+    if (!isLast && SETTINGS.showCommas !== false) summary.appendChild(createSpan('json-punct', ','));
     summary.style.display = collapsed ? 'inline' : 'none';
     row.appendChild(summary);
 
@@ -155,7 +155,7 @@ function buildJsonTree(container, value, key, depth, isLast) {
     closingRow.style.paddingLeft = `${depth * 20}px`;
     closingRow.appendChild(createSpan('json-toggle-spacer', ''));
     closingRow.appendChild(createSpan(bracketClass, closeChar));
-    if (!isLast) closingRow.appendChild(createSpan('json-punct', ','));
+    if (!isLast && SETTINGS.showCommas !== false) closingRow.appendChild(createSpan('json-punct', ','));
     closingRow.style.display = collapsed ? 'none' : '';
     container.appendChild(closingRow);
 

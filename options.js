@@ -1,7 +1,7 @@
 let THEMES = {};
 
 const DEFAULT_THEME = 'material';
-const DEFAULT_SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false, colorBrackets: true };
+const DEFAULT_SETTINGS = { quoteKeys: true, countOnly: false, wrapStrings: false, colorBrackets: true, showCommas: true };
 
 function applyPreview(themeKey, settings) {
     const t = THEMES[themeKey] || THEMES[DEFAULT_THEME];
@@ -25,6 +25,10 @@ function applyPreview(themeKey, settings) {
     const summaryEls = preview.querySelectorAll('.preview-summary');
     summaryEls[0].textContent = s.countOnly ? ' 2 ' : ' 2 keys ';
     summaryEls[1].textContent = s.countOnly ? ' 3 ' : ' 3 items ';
+    const showCommas = s.showCommas !== false;
+    preview.querySelectorAll('.preview-comma').forEach(el => {
+        el.style.display = showCommas ? '' : 'none';
+    });
 }
 
 function getCurrentSettings() {
@@ -33,6 +37,7 @@ function getCurrentSettings() {
         countOnly: document.getElementById('countOnly').checked,
         wrapStrings: document.getElementById('wrapStrings').checked,
         colorBrackets: document.getElementById('colorBrackets').checked,
+        showCommas: document.getElementById('showCommas').checked,
     };
 }
 
@@ -45,6 +50,7 @@ function loadSettings() {
         document.getElementById('countOnly').checked = settings.countOnly;
         document.getElementById('wrapStrings').checked = settings.wrapStrings;
         document.getElementById('colorBrackets').checked = settings.colorBrackets !== false;
+        document.getElementById('showCommas').checked = settings.showCommas !== false;
         applyPreview(theme, settings);
     });
 }
@@ -95,6 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyPreview(document.getElementById('theme').value, getCurrentSettings());
             });
             document.getElementById('colorBrackets').addEventListener('change', () => {
+                applyPreview(document.getElementById('theme').value, getCurrentSettings());
+            });
+            document.getElementById('showCommas').addEventListener('change', () => {
                 applyPreview(document.getElementById('theme').value, getCurrentSettings());
             });
         });
