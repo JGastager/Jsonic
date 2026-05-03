@@ -48,9 +48,10 @@ function applySettings() {
  * Recursively builds JSON tree DOM nodes into `container`.
  * All user-supplied content is set via textContent, never innerHTML.
  */
-function buildJsonTree(container, value, key, depth, isLast) {
+function buildJsonTree(container, value, key, depth, isLast, path = '$', arrayIndex = null) {
     const row = createEl('div', 'json-row');
     row.style.paddingLeft = `${depth * 20}px`;
+    row._jpData = { key: arrayIndex !== null ? arrayIndex : key, value, path };
 
     // Optional key prefix
     if (key !== null && key !== undefined) {
@@ -141,11 +142,14 @@ function buildJsonTree(container, value, key, depth, isLast) {
 
     if (isArray) {
         value.forEach((item, i) => {
-            buildJsonTree(childContainer, item, null, depth + 1, i === value.length - 1);
+            buildJsonTree(childContainer, item, null, depth + 1, i === value.length - 1, `${path}[${i}]`, i);
         });
     } else {
         childKeys.forEach((k, i) => {
-            buildJsonTree(childContainer, value[k], k, depth + 1, i === childKeys.length - 1);
+            const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k)
+                ? `${path}.${k}`
+                : `${path}["${k.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"]`;
+            buildJsonTree(childContainer, value[k], k, depth + 1, i === childKeys.length - 1, childPath);
         });
     }
     container.appendChild(childContainer);
@@ -185,6 +189,93 @@ function buildJsonTree(container, value, key, depth, isLast) {
             toggle.classList.toggle('open', isCollapsed);
         }
     });
+}
+
+// -- Context menu -----------------------------------------------------------
+
+function setupContextMenu(root) {
+    let menu = null;
+    let targetRow = null;
+
+    function hideMenu() {
+        if (menu) { menu.remove(); menu = null; }
+        targetRow = null;
+    }
+
+    function showMenu(e, row) {
+        hideMenu();
+        targetRow = row;
+
+        menu = createEl('div');
+        menu.id = 'jp-context-menu';
+
+        const isCollapsible = row.classList.contains('json-collapsible') && row._jsonCollapsible;
+        const isCollapsed = isCollapsible && row._jsonCollapsible.childContainer.style.display === 'none';
+
+        const actions = [
+            { action: 'copy-key', label: 'Copy Key', iconClass: 'jp-ctx-icon-key' },
+            { action: 'copy-value', label: 'Copy Value', iconClass: 'jp-ctx-icon-value' },
+            { action: 'copy-path', label: 'Copy Path', iconClass: 'jp-ctx-icon-path' },
+            ...(isCollapsible ? [{ action: 'toggle-collapse', label: isCollapsed ? 'Expand' : 'Collapse', iconClass: isCollapsed ? 'jp-ctx-icon-expand' : 'jp-ctx-icon-collapse' }] : []),
+        ];
+
+        actions.forEach(({ action, label, iconClass }) => {
+            const item = createEl('div', 'jp-ctx-item');
+            const icon = createEl('span', `jp-ctx-icon ${iconClass}`);
+            const labelEl = createEl('span');
+            labelEl.textContent = label;
+            item.appendChild(icon);
+            item.appendChild(labelEl);
+            item.addEventListener('click', () => {
+                if (!targetRow || !targetRow._jpData) { hideMenu(); return; }
+                const { key, value, path } = targetRow._jpData;
+                if (action === 'toggle-collapse') {
+                    if (!targetRow._jsonCollapsible) { hideMenu(); return; }
+                    const c = targetRow._jsonCollapsible;
+                    const collapsed = c.childContainer.style.display === 'none';
+                    c.childContainer.style.display = collapsed ? '' : 'none';
+                    c.closingRow.style.display = collapsed ? '' : 'none';
+                    c.summary.style.display = collapsed ? 'none' : 'inline';
+                    c.toggle.classList.toggle('open', collapsed);
+                    hideMenu();
+                    return;
+                }
+                let text = '';
+                if (action === 'copy-key') {
+                    text = key !== null && key !== undefined ? String(key) : '';
+                } else if (action === 'copy-value') {
+                    text = value === null ? 'null'
+                        : typeof value === 'object' ? JSON.stringify(value, null, 2)
+                            : String(value);
+                } else if (action === 'copy-path') {
+                    text = path || '';
+                }
+                navigator.clipboard.writeText(text).catch(() => { });
+                hideMenu();
+            });
+            menu.appendChild(item);
+        });
+
+        menu.style.left = '0px';
+        menu.style.top = '0px';
+        root.appendChild(menu);
+
+        const rect = menu.getBoundingClientRect();
+        const x = Math.min(e.clientX, window.innerWidth - rect.width - 8);
+        const y = Math.min(e.clientY, window.innerHeight - rect.height - 8);
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+    }
+
+    root.addEventListener('contextmenu', (e) => {
+        const row = e.target.closest('.json-row');
+        if (!row || !row._jpData) return;
+        e.preventDefault();
+        showMenu(e, row);
+    });
+
+    root.addEventListener('click', (e) => { if (!e.target.closest('#jp-context-menu')) hideMenu(); }, true);
+    root.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideMenu(); });
 }
 
 // -- Tab/panel rendering ---------------------------------------------------
@@ -289,6 +380,8 @@ function refresh() {
 // -- Boot -------------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
+    setupContextMenu(document.body);
+
     fetch(chrome.runtime.getURL('themes.json'))
         .then(r => r.json())
         .then(themes => {

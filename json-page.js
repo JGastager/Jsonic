@@ -227,10 +227,14 @@
             menu = createEl('div');
             menu.id = 'jp-context-menu';
 
+            const isCollapsible = row.classList.contains('json-collapsible') && row._jsonCollapsible;
+            const isCollapsed = isCollapsible && row._jsonCollapsible.childContainer.style.display === 'none';
+
             const actions = [
                 { action: 'copy-key', label: 'Copy Key', iconClass: 'jp-ctx-icon-key' },
                 { action: 'copy-value', label: 'Copy Value', iconClass: 'jp-ctx-icon-value' },
                 { action: 'copy-path', label: 'Copy Path', iconClass: 'jp-ctx-icon-path' },
+                ...(isCollapsible ? [{ action: 'toggle-collapse', label: isCollapsed ? 'Expand' : 'Collapse', iconClass: isCollapsed ? 'jp-ctx-icon-expand' : 'jp-ctx-icon-collapse' }] : []),
             ];
 
             actions.forEach(({ action, label, iconClass }) => {
@@ -243,6 +247,17 @@
                 item.addEventListener('click', () => {
                     if (!targetRow || !targetRow._jpData) { hideMenu(); return; }
                     const { key, value, path } = targetRow._jpData;
+                    if (action === 'toggle-collapse') {
+                        if (!targetRow._jsonCollapsible) { hideMenu(); return; }
+                        const c = targetRow._jsonCollapsible;
+                        const collapsed = c.childContainer.style.display === 'none';
+                        c.childContainer.style.display = collapsed ? '' : 'none';
+                        c.closingRow.style.display = collapsed ? '' : 'none';
+                        c.summary.style.display = collapsed ? 'none' : 'inline';
+                        c.toggle.classList.toggle('open', collapsed);
+                        hideMenu();
+                        return;
+                    }
                     let text = '';
                     if (action === 'copy-key') {
                         text = key !== null && key !== undefined ? String(key) : '';
