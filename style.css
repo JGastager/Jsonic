@@ -265,7 +265,7 @@ nav ul li.active::before {
 
 
 .json-panel {
-  min-height: calc(100% - 26px);
+  min-height: 100%;
   padding: 12px 8px;
   width: fit-content;
   min-width: 100%;

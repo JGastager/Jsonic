@@ -34,6 +34,23 @@ function setPasteReady(val) {
     pasteReady = val;
 }
 
+function syncPathBar() {
+    const pathBarEl = document.getElementById('jp-path-preview');
+    if (!pathBarEl) return;
+    const panelsEl = document.getElementById('json-panels');
+    if (panelsEl.querySelector('.empty-state')) {
+        pathBarEl.style.display = 'none';
+        return;
+    }
+    const activePanel = Array.from(panelsEl.querySelectorAll('.json-panel'))
+        .find(p => p.style.display !== 'none');
+    if (!activePanel || activePanel._showingRaw || activePanel.querySelector('.custom-json-input')) {
+        pathBarEl.style.display = 'none';
+        return;
+    }
+    pathBarEl.style.display = '';
+}
+
 function applySettings() {
     document.querySelectorAll('.json-tree').forEach(tree => {
         tree.classList.toggle('wrap-strings', SETTINGS.wrapStrings);
@@ -76,6 +93,7 @@ function renderJsonBlocks(jsonBlocks) {
         panelsEl.appendChild(empty);
         if (pathBar) panelsEl.prepend(pathBar);
         tabsEl.appendChild(addLi);
+        syncPathBar();
         return;
     }
     setPasteReady(false);
@@ -137,6 +155,7 @@ function renderJsonBlocks(jsonBlocks) {
             .find(p => p.style.display !== 'none');
         const isRaw = activePanel?._showingRaw || false;
         rawBtn.classList.toggle('active', isRaw);
+        syncPathBar();
     }
 
     searchBtn.addEventListener('click', () => {
@@ -422,6 +441,7 @@ function createPendingTab() {
         panelsEl.querySelectorAll('.json-panel').forEach(p => { p.style.display = 'none'; });
         tab.classList.add('active');
         panel.style.display = '';
+        syncPathBar();
     });
 
     // Switch to the new pending tab
@@ -430,6 +450,7 @@ function createPendingTab() {
     tab.classList.add('active');
     panel.style.display = '';
     textarea.focus();
+    syncPathBar();
 
     function setBadge(text, error = false) {
         let badge = tab.querySelector('.tab-badge');
@@ -471,6 +492,7 @@ function createPendingTab() {
 
         pendingTab = null;
         setPasteReady(false);
+        syncPathBar();
     }
 
     parseBtn.addEventListener('click', () => {
