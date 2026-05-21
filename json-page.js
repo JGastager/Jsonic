@@ -96,7 +96,7 @@
     }
 
     // ── Search ───────────────────────────────────────────────────────────────
-    function setupSearch(root, header, headerBtns, body) {
+    function setupSearch(root, header, headerBtns, body, rawBtn) {
         // Search toggle button in header
         const searchBtn = createEl('div', 'btn');
         searchBtn.dataset.tooltip = 'Search  Ctrl+F';
@@ -227,6 +227,7 @@
         }
 
         function openSearch() {
+            if (rawBtn.classList.contains('active')) rawBtn.click();
             searchBtn.style.display = 'none';
             wrap.style.display = 'flex';
             root.classList.add('jp-search-open');
@@ -276,6 +277,7 @@
         caseBtn.addEventListener('click', () => toggleOpt(caseBtn, 'matchCase'));
         wordBtn.addEventListener('click', () => toggleOpt(wordBtn, 'wholeWord'));
         regexBtn.addEventListener('click', () => toggleOpt(regexBtn, 'useRegex'));
+        return closeSearch;
     }
 
     // ── Page takeover ────────────────────────────────────────────────────────
@@ -325,6 +327,7 @@
         settingsBtn.appendChild(createEl('span', 'i-gear'));
         settingsBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openOptions' }));
 
+        let _closeSearch = null;
         const rawBtn = createEl('div');
         rawBtn.className = 'btn';
         rawBtn.dataset.tooltip = 'View raw JSON  Ctrl+\\';
@@ -345,6 +348,7 @@
                 const pre = createEl('pre', 'jp-raw-json');
                 pre.textContent = JSON.stringify(parsed, null, 2);
                 body.appendChild(pre);
+                if (_closeSearch) _closeSearch();
             }
         });
 
@@ -376,7 +380,7 @@
         setupContextMenu(root);
         setupPathTooltip(root);
         setupPathPreview(body);
-        setupSearch(root, header, headerBtns, body);
+        _closeSearch = setupSearch(root, header, headerBtns, body, rawBtn);
 
         // Update page title
         document.title = buildDocTitle(parsed);

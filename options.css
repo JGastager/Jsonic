@@ -100,7 +100,7 @@ a:hover svg path {
     border-radius: 6px;
     padding: 12px 16px;
     margin-top: 18px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
     transition: color 0.2s;
 }
 
@@ -113,7 +113,7 @@ a:hover svg path {
 .preview-collapsed-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     line-height: 2;
 }
 
@@ -151,7 +151,7 @@ a:hover svg path {
 .config-item select {
     padding: 6px 12px;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 8px;
     background-color: var(--jp-hover);
     color: var(--jp-text);
     cursor: pointer;
@@ -169,9 +169,9 @@ a:hover svg path {
 button {
     padding: 10px 20px;
     margin-top: 20px;
-    margin-right: 10px;
+    margin-right: 8px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 0.9em;
     transition: background-color 0.2s;
@@ -199,7 +199,7 @@ button {
 #status {
     margin-top: 24px;
     padding: 6px 8px;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 14px;
     opacity: 0;
     transition: all 0.2s ease;
@@ -311,7 +311,7 @@ button {
     width: 24px;
     height: 24px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 0;
     background: transparent;
     cursor: pointer;
@@ -320,12 +320,12 @@ button {
 
 .cp-swatch-wrap input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .cp-swatch-wrap input[type="color"]::-webkit-color-swatch {
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .cp-hex {

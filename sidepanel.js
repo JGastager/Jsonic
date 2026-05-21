@@ -153,6 +153,7 @@ function renderJsonBlocks(jsonBlocks) {
         activePanel._showingRaw = !showingRaw;
         if (tree) tree.style.display = showingRaw ? '' : 'none';
         if (rawView) rawView.style.display = showingRaw ? 'none' : '';
+        if (!showingRaw && window._closeSearch) window._closeSearch();
         syncToolbar();
     });
 
@@ -239,7 +240,7 @@ function refresh() {
 // -- Search -----------------------------------------------------------------
 
 function setupSearch() {
-    const bar = document.getElementById('search-bar');
+    const wrap = document.getElementById('search-input-wrap');
     const input = document.getElementById('search-input');
     const countEl = document.getElementById('search-count');
     const prevBtn = document.getElementById('search-prev');
@@ -306,15 +307,26 @@ function setupSearch() {
     }
 
     function openSearch() {
-        bar.classList.add('open');
-        document.body.classList.add('search-open');
+        const activePanel = Array.from(document.querySelectorAll('.json-panel')).find(p => p.style.display !== 'none');
+        if (activePanel?._showingRaw) {
+            const tree = activePanel.querySelector('.json-tree');
+            const rawView = activePanel.querySelector('.panel-raw-json');
+            activePanel._showingRaw = false;
+            if (tree) tree.style.display = '';
+            if (rawView) rawView.style.display = 'none';
+            if (_syncPanelToolbar) _syncPanelToolbar();
+        }
+        const searchBtnEl = document.getElementById('toolbar-search-btn');
+        if (searchBtnEl) searchBtnEl.style.display = 'none';
+        wrap.style.display = 'flex';
         input.focus();
         input.select();
     }
 
     function closeSearch() {
-        bar.classList.remove('open');
-        document.body.classList.remove('search-open');
+        wrap.style.display = 'none';
+        const searchBtnEl = document.getElementById('toolbar-search-btn');
+        if (searchBtnEl) searchBtnEl.style.display = '';
         clearHighlights();
         input.value = '';
         countEl.textContent = '';
@@ -328,12 +340,13 @@ function setupSearch() {
 
     _reRunSearch = () => runSearch(input.value);
     window._openSearch = openSearch;
+    window._closeSearch = closeSearch;
 
     document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); openSearch(); }
         if ((e.ctrlKey || e.metaKey) && e.key === ',') { e.preventDefault(); window.open(chrome.runtime.getURL('options.html'), '_blank'); }
-        if (e.key === 'Escape' && bar.classList.contains('open')) closeSearch();
-        if (e.altKey && bar.classList.contains('open')) {
+        if (e.key === 'Escape' && wrap.style.display !== 'none') closeSearch();
+        if (e.altKey && wrap.style.display !== 'none') {
             if (e.key === 'c') { e.preventDefault(); toggleOpt(caseBtn, 'matchCase'); }
             if (e.key === 'w') { e.preventDefault(); toggleOpt(wordBtn, 'wholeWord'); }
             if (e.key === 'r') { e.preventDefault(); toggleOpt(regexBtn, 'useRegex'); }

@@ -16,19 +16,7 @@
   </nav>
 
   <div id="panel-toolbar">
-    <button class="btn panel-toolbar-btn" id="toolbar-search-btn" data-tooltip="Search  Ctrl+F">
-      <span class="i-search-btn"></span>
-    </button>
-    <button class="btn panel-toolbar-btn" id="toolbar-raw-btn" data-tooltip="Display raw JSON">
-      <span class="i-raw"></span>
-    </button>
-    <a href="options.html" target="_blank" class="btn panel-toolbar-btn" data-tooltip="Open settings  Ctrl+,">
-      <span class="i-gear"></span>
-    </a>
-  </div>
-
-  <div id="search-bar">
-    <div id="search-input-wrap">
+    <div id="search-input-wrap" style="display:none">
       <span class="i-search"></span>
       <input id="search-input" type="text" placeholder="Search keys &amp; values…" spellcheck="false" autocomplete="off">
       <button id="search-opt-case" class="search-opt-btn" data-tooltip="Match Case  Alt+C">Aa</button>
@@ -40,6 +28,15 @@
       <button id="search-next" class="search-nav-btn" data-tooltip="Next match  Enter"><span class="i-search-next"></span></button>
       <button id="search-close" data-tooltip="Close search  Esc"><span class="i-search-close"></span></button>
     </div>
+    <button class="btn panel-toolbar-btn" id="toolbar-search-btn" data-tooltip="Search  Ctrl+F">
+      <span class="i-search-btn"></span>
+    </button>
+    <button class="btn panel-toolbar-btn" id="toolbar-raw-btn" data-tooltip="Display raw JSON">
+      <span class="i-raw"></span>
+    </button>
+    <a href="options.html" target="_blank" class="btn panel-toolbar-btn" data-tooltip="Open settings  Ctrl+,">
+      <span class="i-gear"></span>
+    </a>
   </div>
   <main id="json-panels">
     <div class="jp-path-preview" id="jp-path-preview"></div>

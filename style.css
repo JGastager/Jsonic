@@ -4,7 +4,8 @@
 
 :root {
   --jp-bg:           #151515;
-  --jp-body:         #303030;
+  --jp-dark:         #252525;
+  --jp-body:         #3C3C3C;
   --jp-hover:        #404040;
   --jp-dimmed:       #707070;
   --jp-muted:        #a0a0a0;
@@ -66,7 +67,7 @@ body {
 }
 
 body {
-  background: var(--jp-body);
+  background: var(--jp-dark);
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 13px;
   font-weight: 400;
@@ -75,10 +76,14 @@ body {
   flex-direction: column;
 }
 
+body:has(.json-tree) {
+    background: var(--jp-body);
+}
+
 /* ── Sidepanel — Nav ───────────────────────────────────────────────────── */
 
 nav {
-  background-color: var(--jp-bg);
+  background-color: var(--jp-dark);
   height: 48px;
   width: 100%;
   flex-shrink: 0;
@@ -89,7 +94,7 @@ nav {
 nav ul {
   display: flex;
   padding: 8px 0 0 8px;
-  border-radius: 4px;
+  border-radius: 8px;
   align-items: stretch;
   height: 100%;
   list-style: none;
@@ -109,9 +114,10 @@ nav ul::-webkit-scrollbar-thumb {
 }
 
 nav ul li {
+  margin-right: 8px;
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 4px 4px 0 0;
+  padding: 6px 12px 6px 12px;
+  border-radius: 8px;
   font-weight: 500;
   white-space: nowrap;
   transition: background-color 0.2s ease;
@@ -122,6 +128,7 @@ nav ul li {
   font-size: 13px;
   position: relative;
   background-color: var(--jp-soft);
+  height: 32px;
 }
 
 nav ul li:hover {
@@ -130,6 +137,9 @@ nav ul li:hover {
 
 nav ul li.active {
   background-color: var(--jp-body);
+  border-radius: 8px 8px 0 0;
+  height: 40px;
+  padding: 6px 12px 14px 12px;
 }
 
 nav ul li.active::after {
@@ -137,10 +147,10 @@ nav ul li.active::after {
   content: '';
   position: absolute;
   bottom: 0;
-  right: -4px;
-  height: 4px;
-  width: 4px;
-  border-top-right-radius: 4px;
+  right: -8px;
+  height: 8px;
+  width: 8px;
+  border-top-right-radius: 8px;
   corner-shape: scoop;
   z-index: 1;
 }
@@ -150,46 +160,49 @@ nav ul li.active::before {
   content: '';
   position: absolute;
   bottom: 0;
-  left: -4px;
-  height: 4px;
-  width: 4px;
-  border-top-left-radius: 4px;
+  left: -8px;
+  height: 8px;
+  width: 8px;
+  border-top-left-radius: 8px;
   corner-shape: scoop;
   z-index: 1;
 }
 
 .tab-badge {
   font-family: 'Roboto Mono', 'Consolas', monospace;
-  font-size: 13px;
+  font-size: 11.5px;
   background: var(--jp-primary-muted);
   color: var(--jp-primary);
   padding: 2px 5px;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 #add-json-li {
+  align-self: self-start;
   margin-left: auto;
-  padding: 0 8px;
+  padding: 0 8px 8px 8px;
   background: none;
   cursor: default;
-  border-radius: 0;
   position: sticky;
   right: 0;
   bottom: 0;
-  background-color: var(--jp-bg);
+  background-color: var(--jp-dark);
   z-index: 2;
-  border-radius: 0 0 0 4px;
+  border-radius: 0 0 0 8px;
+  margin-right: 0;
+  margin-left: -8px;
+  height: 40px;
 }
 
 #add-json-li::before {
-  background-color: var(--jp-bg);
+  background-color: var(--jp-dark);
   content: '';
   position: absolute;
   top: 0;
-  left: -4px;
-  height: 4px;
-  width: 4px;
-  border-bottom-left-radius: 4px;
+  left: -8px;
+  height: 8px;
+  width: 8px;
+  border-bottom-left-radius: 8px;
   corner-shape: scoop;
   z-index: 1;
 }
@@ -206,10 +219,11 @@ nav ul li.active::before {
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 8px 8px;
   background: var(--jp-body);
   flex-shrink: 0;
-  border-radius: 4px 4px 0 0;
+  border-radius: 8px 8px 0 0;
+  flex-wrap: wrap-reverse;
 }
 
 .panel-toolbar-btn {
@@ -252,7 +266,7 @@ nav ul li.active::before {
 
 .json-panel {
   min-height: calc(100% - 26px);
-  padding: 12px 10px;
+  padding: 12px 8px;
   width: fit-content;
   min-width: 100%;
   gap: 6px;
@@ -295,7 +309,7 @@ nav ul li.active::before {
   display: none;
   position: sticky;
   top: 12px;
-  left: 10px;
+  left: 8px;
   max-width: calc(100vw - 20px);
   font-size: 11.5px;
   padding: 6px 10px;
@@ -304,7 +318,7 @@ nav ul li.active::before {
   min-height: 0;
   font-family: 'Roboto Mono', 'Consolas', monospace;
   backdrop-filter: blur(40px);
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .custom-json-error:not(:empty) {
@@ -330,7 +344,7 @@ nav ul li.active::before {
   gap: 6px;
   padding: 8px 8px 8px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9em;
   transition: background-color 0.2s ease;
@@ -363,7 +377,7 @@ nav ul li.active::before {
 
 main {
   background: var(--jp-bg);
-  border-radius: 4px 4px 0 0;
+  border-radius: 8px 8px 0 0;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -374,29 +388,23 @@ main {
 
 /* ── Sidepanel — Search bar ────────────────────────────────────────────── */
 
-#search-bar {
-  display: none;
-  background: var(--jp-body);
-  padding: 6px 8px;
-}
-
-#search-bar.open {
-  display: block;
-  flex-shrink: 0;
+#panel-toolbar #search-input-wrap {
+  flex: auto;
+  min-width: 0;
 }
 
 #search-input-wrap {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--jp-bg);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
+  background: var(--jp-dark);
+  border-radius: 8px;
   padding: 4px 6px;
+  transition: background-color 0.2s ease;
 }
 
 #search-input-wrap:focus-within {
-  border-color: var(--jp-hover);
+  background-color: var(--jp-bg);
 }
 
 #search-input-wrap .i-search {
@@ -423,14 +431,15 @@ main {
 }
 
 #search-input {
-  flex: 1;
   background: transparent;
   border: none;
   outline: none;
   color: var(--jp-text);
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 12px;
-  min-width: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 100px;
 }
 
 #search-input::placeholder {
@@ -463,7 +472,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.1s, color 0.1s;
+  transition: background 0.3s, color 0.3s;
 }
 
 .i-search-prev,
@@ -479,7 +488,7 @@ main {
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .i-search-prev {
@@ -496,7 +505,7 @@ main {
 
 .search-nav-btn:hover,
 #search-close:hover {
-  background: var(--jp-soft);
+  background: var(--jp-softer);
 }
 
 .search-nav-btn:hover .i-search-prev,
@@ -527,11 +536,11 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.1s, color 0.1s;
+  transition: background 0.3s, color 0.3s;
 }
 
 .search-opt-btn:hover {
-  background: var(--jp-soft);
+  background: var(--jp-softer);
   color: var(--jp-text);
 }
 
@@ -588,7 +597,7 @@ main::-webkit-scrollbar-thumb {
   color: var(--jp-muted);
   text-align: center;
   padding: 24px;
-  gap: 10px;
+  gap: 8px;
 }
 
 .empty-state p {
@@ -612,7 +621,7 @@ main::-webkit-scrollbar-thumb {
   font-size: 11.5px;
   background: var(--jp-primary-muted);
   padding: 2px 3px;
-  border-radius: 3px;
+  border-radius: 4px;
   color: var(--jp-primary);
 }
 
@@ -622,11 +631,11 @@ main::-webkit-scrollbar-thumb {
   flex: 1;
   overflow-y: auto;
   overflow-x: auto;
-  padding: 14px 16px;
+  padding: 0;
   scrollbar-width: thin;
   scrollbar-color: var(--jp-muted) transparent;
   background: var(--jp-bg);
-  border-radius: 4px 4px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 #jp-page-body::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -643,12 +652,16 @@ main::-webkit-scrollbar-thumb {
   padding-bottom: 20px;
 }
 
+#jp-page-body .json-tree {
+  padding: 14px 16px 20px;
+}
+
 .json-tree.wrap-strings .json-row { white-space: normal; }
 .json-tree.wrap-strings .json-string { white-space: normal; word-break: break-word; }
 
 .json-row {
   display: block;
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 0 2px;
   white-space: nowrap;
 }
@@ -731,7 +744,7 @@ main::-webkit-scrollbar-thumb {
   height: 12px;
   border-left: 1px solid var(--jp-guides);
   border-bottom: 1px solid var(--jp-guides);
-  border-radius: 0 0 0 3px;
+  border-radius: 0 0 0 4px;
   pointer-events: none;
   transition: border-color 0.2s ease;
 }
@@ -805,7 +818,7 @@ main::-webkit-scrollbar-thumb {
   padding: 0;
   border: none;
   background: transparent;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.3s ease;
@@ -849,6 +862,7 @@ main::-webkit-scrollbar-thumb {
   overflow: hidden;
   box-sizing: border-box;
   background: var(--jp-bg);
+  border-bottom: 1px solid var(--jp-guides);
   display: flex;
   align-items: center;
   padding: 0 12px;
@@ -860,7 +874,7 @@ main::-webkit-scrollbar-thumb {
 
 .jp-bc-crumb {
   font-family: 'Roboto Mono', 'Consolas', monospace;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--jp-dimmed);
   white-space: nowrap;
   overflow: hidden;
@@ -870,16 +884,18 @@ main::-webkit-scrollbar-thumb {
 }
 
 .jp-bc-crumb.jp-bc-active {
-  color: var(--jp-primary);
+  color: var(--jp-text);
   flex-shrink: 0;
 }
 
 .jp-bc-sep {
-  font-size: 11px;
-  color: var(--jp-dimmed);
-  padding: 0 4px;
+  width: 26px;
+  height: 20px;
+  background-color: var(--jp-dimmed);
   flex-shrink: 0;
-  opacity: 0.5;
+  mask-size: contain;
+  mask-position: center;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M6.705 11.823a.73.73 0 0 1-1.205-.552V4.729a.73.73 0 0 1 1.205-.552L10.214 7.2a1 1 0 0 1 .347.757v.084a1 1 0 0 1-.347.757z' clip-rule='evenodd'/%3E%3C/svg%3E");
 }
 
 /* ── Shared — Plus icon ────────────────────────────────────────────────── */
@@ -900,11 +916,11 @@ main::-webkit-scrollbar-thumb {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 6px;
+  padding: 7px;
   background: transparent;
   color: var(--jp-text);
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   appearance: none;
   -webkit-appearance: none;
   font-size: 13px;
@@ -916,15 +932,15 @@ main::-webkit-scrollbar-thumb {
 }
 
 .btn:hover {
+  background-color: var(--jp-softer);
+}
+
+#add-json-btn {
   background-color: var(--jp-soft);
 }
 
-#add-json-btn.active {
-  background-color: var(--jp-primary-muted);
-}
-
-#add-json-btn.active .i-plus {
-  background-color: var(--jp-primary);
+#add-json-btn:hover {
+  background-color: var(--jp-softer);
 }
 
 /* ── json-page — Header ─────────────────────────────────────────────────── */
@@ -968,15 +984,15 @@ main::-webkit-scrollbar-thumb {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: var(--jp-bg);
-  border-radius: 6px;
+  background: var(--jp-dark);
+  border-radius: 8px;
   padding: 4px 6px;
   min-width: 0;
-  max-width: 500px;
+  max-width: 600px;
 }
 
 #jp-page-header #search-input-wrap:focus-within {
-  border-color: var(--jp-hover);
+  background-color: var(--jp-bg);
 }
 
 .jp-header-btns {
@@ -1049,7 +1065,7 @@ main::-webkit-scrollbar-thumb {
   pointer-events: none;
   background: var(--jp-body);
   color: var(--jp-text);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 3px 8px;
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 11.5px;
@@ -1099,7 +1115,7 @@ main::-webkit-scrollbar-thumb {
   align-items: center;
   gap: 6px;
   padding: 6px 8px;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
   color: var(--jp-text);
   user-select: none;

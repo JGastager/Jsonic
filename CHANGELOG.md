@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.2]
+
+### What's New
+
+- **🍞 Path breadcrumb bar** — A sticky breadcrumb bar now appears at the top of the tree on hover, showing the full JSON path to the currently hovered row. Available in both the side panel and the full-page JSON view.
+- **📋 Inline copy buttons** — Each JSON row reveals copy-value and copy-path icon buttons on hover, giving quick one-click access without opening the context menu.
+- **🔍 Advanced search options** — The search bar now includes match-case (`Alt+C`), whole-word (`Alt+W`), and regex (`Alt+R`) toggles. Invalid regex patterns are indicated with a red input highlight.
+- **📄 Raw JSON toggle in side panel** — A toolbar with search and raw/tree toggle buttons is now shown above the active panel in the side panel, mirroring the controls available on the full JSON page.
+- **🗂️ Redesigned tab bar** — Tabs now use a browser-style appearance with rounded outer corners and a scoop cutout, and the active tab blends seamlessly into the panel background.
+
+### Improvements
+
+- **Search scoped to active panel** — Search now only highlights matches in the currently visible panel, and expands all collapsed nodes before scanning so no results are missed.
+- **Row hover highlight** — Background highlight on hover now applies to all JSON rows, not just collapsible ones.
+
 ## [1.1.1]
 
 ### What's New
