@@ -2,9 +2,9 @@
 
 :root {
   --jp-bg:      #151515;
-  --jp-body:     #303030;
+  --jp-body:    #3C3C3C;
   --jp-hover:   #404040;
-  --jp-dimmed:   #707070;
+  --jp-dimmed:  #707070;
   --jp-muted:   #a0a0a0;
   --jp-text:    #f0f0f0;
   --jp-soft: rgba(255, 255, 255, 0.05);
