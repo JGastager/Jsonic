@@ -308,6 +308,42 @@ const JsonTreeRenderer = (() => {
         } catch { return { regex: null, error: true }; }
     }
 
+    /** Walk all collapsible rows under `root` and record whether each is open or closed. */
+    function saveCollapseState(root) {
+        const snapshot = [];
+        root.querySelectorAll('.json-collapsible').forEach(row => {
+            if (row._jsonCollapsible) {
+                snapshot.push({ row, open: row._jsonCollapsible.toggle.classList.contains('open') });
+            }
+        });
+        return snapshot;
+    }
+
+    /** Collapse every collapsible node under `root`. */
+    function collapseAll(root) {
+        root.querySelectorAll('.json-collapsible').forEach(row => {
+            const c = row._jsonCollapsible;
+            if (!c) return;
+            c.childContainer.style.display = 'none';
+            c.closingRow.style.display = 'none';
+            c.summary.style.display = 'inline';
+            c.toggle.classList.remove('open');
+        });
+    }
+
+    /** Restore a previously saved collapse-state snapshot. */
+    function restoreCollapseState(snapshot) {
+        snapshot.forEach(({ row, open }) => {
+            const c = row._jsonCollapsible;
+            if (!c) return;
+            if (open && c.childContainer._lazyData) _renderLazy(c.childContainer);
+            c.childContainer.style.display = open ? '' : 'none';
+            c.closingRow.style.display = open ? '' : 'none';
+            c.summary.style.display = open ? 'none' : 'inline';
+            c.toggle.classList.toggle('open', open);
+        });
+    }
+
     function highlightText(span, regex, matchStorage) {
         const text = span.textContent;
         regex.lastIndex = 0;
@@ -667,6 +703,7 @@ const JsonTreeRenderer = (() => {
         buildJsonTree,
         setupContextMenu, setupPathTooltip, setupPathPreview,
         expandAncestors, highlightText, buildSearchRegex,
+        saveCollapseState, collapseAll, restoreCollapseState,
         getTypeName, getRootTypeBadge, labelFromObj, isSchemaJson,
         loadSettings, renderAllDescendants,
     };

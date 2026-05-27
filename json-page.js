@@ -4,7 +4,7 @@
 
     const { buildJsonTree, createEl, createSpan, setupContextMenu, setupPathTooltip, setupPathPreview,
         getTypeName, getRootTypeBadge, labelFromObj, loadSettings, renderAllDescendants, isSchemaJson,
-        highlightText, buildSearchRegex } = JsonTreeRenderer;
+        highlightText, buildSearchRegex, saveCollapseState, collapseAll, restoreCollapseState } = JsonTreeRenderer;
     const SETTINGS = JsonTreeRenderer.SETTINGS;
 
     // ── Detection ────────────────────────────────────────────────────────────
@@ -127,6 +127,7 @@
 
         const state = { matches: [], current: -1 };
         const opts = { matchCase: false, wholeWord: false, useRegex: false };
+        let savedCollapseState = null;
 
         function clearHighlights() {
             input.classList.remove('search-error');
@@ -141,11 +142,22 @@
 
         function runSearch(query) {
             clearHighlights();
-            if (!query) { updateCount(); return; }
+            if (!query) {
+                if (savedCollapseState) {
+                    restoreCollapseState(savedCollapseState);
+                    savedCollapseState = null;
+                }
+                updateCount();
+                return;
+            }
             const { regex, error } = buildSearchRegex(query, opts);
             input.classList.toggle('search-error', error);
             if (error) { updateCount(); return; }
             renderAllDescendants(root);
+            if (!savedCollapseState) {
+                savedCollapseState = saveCollapseState(root);
+            }
+            collapseAll(root);
             root.querySelectorAll('.json-key, .json-string, .json-number, .json-boolean, .json-null').forEach(span => {
                 highlightText(span, regex, state.matches);
             });
@@ -222,6 +234,10 @@
             searchBtn.style.display = '';
             root.classList.remove('jp-search-open');
             clearHighlights();
+            if (savedCollapseState) {
+                restoreCollapseState(savedCollapseState);
+                savedCollapseState = null;
+            }
             input.value = '';
             countEl.textContent = '';
         }
