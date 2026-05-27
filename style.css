@@ -954,6 +954,16 @@ main::-webkit-scrollbar-thumb {
   mask-position: center;
 }
 
+.i-filter {
+  background-color: var(--jp-text);
+  height: 18px;
+  width: 18px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000' d='M2.75 4.5a.75.75 0 0 0 0 1.5h14.5a.75.75 0 0 0 0-1.5zm2 4a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm3 4a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5z'/%3E%3C/svg%3E");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
 /* ── Shared — Settings button ──────────────────────────────────────────── */
 
 .btn {
@@ -985,6 +995,68 @@ main::-webkit-scrollbar-thumb {
 
 #add-json-btn:hover {
   background-color: var(--jp-softer);
+}
+
+/* ── Filter button & menu ──────────────────────────────────────────────── */
+
+#filter-btn {
+  background-color: var(--jp-soft);
+  position: relative;
+}
+
+#filter-btn:hover,
+#filter-btn.active {
+  background-color: var(--jp-softer);
+}
+
+#filter-btn.filter-active::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--jp-primary);
+}
+
+.filter-menu {
+  position: fixed;
+  background: var(--jp-body);
+  border: 1px solid var(--jp-separator);
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 100;
+  min-width: 120px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.filter-option {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--jp-text);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.filter-option:hover {
+  background-color: var(--jp-soft);
+}
+
+.filter-option.active {
+  background-color: var(--jp-primary-muted);
+  color: var(--jp-primary);
 }
 
 /* ── json-page — Header ─────────────────────────────────────────────────── */

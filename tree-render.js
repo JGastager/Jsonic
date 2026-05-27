@@ -659,24 +659,46 @@ const JsonTreeRenderer = (() => {
     }
 
     function isSchemaJson(parsed) {
-        return !!(parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-            && isSchemaOrgContext(parsed['@context']));
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+            && isSchemaOrgContext(parsed['@context'])) return true;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+            const first = parsed[0];
+            return !!(first && typeof first === 'object' && !Array.isArray(first)
+                && isSchemaOrgContext(first['@context']));
+        }
+        return false;
+    }
+
+    /** Extract the @type value from a schema object or the first element of a schema array. */
+    function getSchemaType(parsed) {
+        const obj = Array.isArray(parsed) ? parsed[0] : parsed;
+        if (!obj || typeof obj !== 'object') return null;
+        const typeVal = obj['@type'];
+        if (typeof typeVal === 'string' && typeVal.trim()) return typeVal.trim();
+        if (Array.isArray(typeVal)) {
+            const first = typeVal.find(v => typeof v === 'string' && v.trim());
+            if (first) return first.trim();
+        }
+        return null;
     }
 
     /** Returns a readable tab label from a JSON object, or fallback. */
     function labelFromObj(parsed, fallback) {
-        if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
-            if (isSchemaJson(parsed)) {
-                const typeVal = parsed['@type'];
-                if (typeof typeVal === 'string' && typeVal.trim()) return typeVal.trim();
-                if (Array.isArray(typeVal)) {
-                    const firstType = typeVal.find(v => typeof v === 'string' && v.trim());
-                    if (firstType) return firstType.trim();
+        if (parsed !== null && typeof parsed === 'object') {
+            const target = Array.isArray(parsed) ? parsed[0] : parsed;
+            if (target && typeof target === 'object' && !Array.isArray(target)) {
+                if (isSchemaJson(parsed)) {
+                    const typeVal = target['@type'];
+                    if (typeof typeVal === 'string' && typeVal.trim()) return typeVal.trim();
+                    if (Array.isArray(typeVal)) {
+                        const firstType = typeVal.find(v => typeof v === 'string' && v.trim());
+                        if (firstType) return firstType.trim();
+                    }
                 }
-            }
-            for (const key of ['name', 'title']) {
-                const val = parsed[key];
-                if (typeof val === 'string' && val.trim()) return val.trim();
+                for (const key of ['name', 'title']) {
+                    const val = target[key];
+                    if (typeof val === 'string' && val.trim()) return val.trim();
+                }
             }
         }
         return fallback;
@@ -704,7 +726,7 @@ const JsonTreeRenderer = (() => {
         setupContextMenu, setupPathTooltip, setupPathPreview,
         expandAncestors, highlightText, buildSearchRegex,
         saveCollapseState, collapseAll, restoreCollapseState,
-        getTypeName, getRootTypeBadge, labelFromObj, isSchemaJson,
+        getTypeName, getRootTypeBadge, labelFromObj, isSchemaJson, getSchemaType,
         loadSettings, renderAllDescendants,
     };
 })();

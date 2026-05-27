@@ -26,7 +26,7 @@ function applyTheme(themeKey) {
 }
 
 const { buildJsonTree, createEl, createSpan, setupContextMenu, setupPathTooltip, setupPathPreview,
-    getTypeName, getRootTypeBadge, loadSettings, isSchemaJson,
+    getTypeName, getRootTypeBadge, loadSettings, isSchemaJson, getSchemaType,
     highlightText, expandAncestors, renderAllDescendants, buildSearchRegex,
     saveCollapseState, collapseAll, restoreCollapseState } = JsonTreeRenderer;
 const SETTINGS = JsonTreeRenderer.SETTINGS;
@@ -37,6 +37,7 @@ let pasteReady = false;
 let _refreshSeq = 0;
 let _reRunSearch = null;
 let _syncPanelToolbar = null;
+let _activeFilter = 'all';
 
 function setPasteReady(val) {
     pasteReady = val;
@@ -72,6 +73,7 @@ function renderJsonBlocks(jsonBlocks) {
     const panelsEl = document.getElementById('json-panels');
     const pathBar = document.getElementById('jp-path-preview');
     const addLi = document.getElementById('add-json-li');
+    const filterBtn = document.getElementById('filter-btn');
 
     tabsEl.innerHTML = '';
     panelsEl.innerHTML = '';
@@ -79,6 +81,17 @@ function renderJsonBlocks(jsonBlocks) {
 
     const toolbarEl = document.getElementById('panel-toolbar');
     _syncPanelToolbar = null;
+
+    // Reset filter state
+    _activeFilter = 'all';
+    const filterMenu = document.getElementById('filter-menu');
+    if (filterMenu) {
+        filterMenu.style.display = 'none';
+        filterMenu.querySelectorAll('.filter-option').forEach(o => {
+            o.classList.toggle('active', o.dataset.filter === 'all');
+        });
+    }
+    if (filterBtn) filterBtn.classList.remove('active', 'filter-active');
 
     if (!jsonBlocks || jsonBlocks.length === 0) {
         toolbarEl.style.display = 'none';
@@ -106,7 +119,15 @@ function renderJsonBlocks(jsonBlocks) {
     }
     setPasteReady(false);
 
-    const baseNames = jsonBlocks.map(({ data, label }) => label || getTypeName(data));
+
+
+    const baseNames = jsonBlocks.map(({ data, label }) => {
+        if (isSchemaJson(data)) {
+            const schemaType = getSchemaType(data);
+            if (schemaType) return schemaType;
+        }
+        return label || getTypeName(data);
+    });
     const nameCounts = new Map();
     baseNames.forEach((name) => {
         nameCounts.set(name, (nameCounts.get(name) || 0) + 1);
@@ -123,9 +144,14 @@ function renderJsonBlocks(jsonBlocks) {
         const tabName = countForName > 1 ? `${baseName} ${seenForName}` : baseName;
         const display = tabName.length > 22 ? tabName.slice(0, 22) + '\u2026' : tabName;
         tab.appendChild(document.createTextNode(display));
-        const badge = createSpan('tab-badge', getRootTypeBadge(data));
-        if (isSchemaJson(data)) badge.classList.add('tab-badge-schema');
+        const schema = isSchemaJson(data);
+        const badge = createSpan('tab-badge', schema ? 'Schema' : getRootTypeBadge(data));
+        if (schema) badge.classList.add('tab-badge-schema');
         tab.appendChild(badge);
+        tab._isSchema = schema;
+        tab._isJsonLd = !!(data && typeof data === 'object' && !Array.isArray(data) && data['@context']);
+        tab._isArray = Array.isArray(data);
+        tab._isObject = !!(data && typeof data === 'object' && !Array.isArray(data));
         if (i === 0) tab.classList.add('active');
         tabsEl.appendChild(tab);
 
@@ -442,6 +468,106 @@ function setupSearch() {
     regexBtn.addEventListener('click', () => toggleOpt(regexBtn, 'useRegex'));
 }
 
+// -- Filter -----------------------------------------------------------------
+
+function setupFilter() {
+    const filterBtn = document.getElementById('filter-btn');
+    const addLi = document.getElementById('add-json-li');
+
+    // Build the dropdown menu dynamically
+    const menu = createEl('div', 'filter-menu');
+    menu.id = 'filter-menu';
+    menu.style.display = 'none';
+    const filters = [
+        { key: 'all', label: 'All' },
+        { key: 'schema', label: 'Schema.org' },
+        { key: 'json-ld', label: 'JSON-LD' },
+        { key: 'arrays', label: 'Arrays' },
+        { key: 'objects', label: 'Objects' },
+        { key: 'non-schema', label: 'Non-Schema' },
+    ];
+    filters.forEach(({ key, label }) => {
+        const opt = createEl('button', 'filter-option');
+        opt.dataset.filter = key;
+        opt.textContent = label;
+        if (key === 'all') opt.classList.add('active');
+        menu.appendChild(opt);
+    });
+    document.body.appendChild(menu);
+
+    function positionMenu() {
+        const rect = filterBtn.getBoundingClientRect();
+        menu.style.top = (rect.bottom + 4) + 'px';
+        menu.style.left = Math.max(0, rect.right - menu.offsetWidth) + 'px';
+    }
+
+    filterBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = menu.style.display !== 'none';
+        menu.style.display = open ? 'none' : '';
+        filterBtn.classList.toggle('active', !open);
+        if (!open) positionMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!filterBtn.contains(e.target) && !menu.contains(e.target)) {
+            menu.style.display = 'none';
+            filterBtn.classList.remove('active');
+        }
+    });
+
+    menu.addEventListener('click', (e) => {
+        const opt = e.target.closest('.filter-option');
+        if (!opt) return;
+        const filter = opt.dataset.filter;
+        _activeFilter = filter;
+        menu.querySelectorAll('.filter-option').forEach(o => o.classList.toggle('active', o === opt));
+        menu.style.display = 'none';
+        filterBtn.classList.remove('active');
+        filterBtn.classList.toggle('filter-active', filter !== 'all');
+        applyFilter();
+    });
+}
+
+function applyFilter() {
+    const tabsEl = document.getElementById('json-tabs');
+    const panelsEl = document.getElementById('json-panels');
+    const tabs = Array.from(tabsEl.querySelectorAll('li:not(#add-json-li)'));
+    const panels = Array.from(panelsEl.querySelectorAll('.json-panel'));
+
+    let firstVisible = null;
+    tabs.forEach((tab, i) => {
+        const panel = panels[i];
+        if (!panel) return;
+        let show = true;
+        switch (_activeFilter) {
+            case 'schema': show = !!tab._isSchema; break;
+            case 'json-ld': show = !!tab._isJsonLd; break;
+            case 'arrays': show = !!tab._isArray; break;
+            case 'objects': show = !!tab._isObject; break;
+            case 'non-schema': show = !tab._isSchema; break;
+            default: show = true;
+        }
+        tab.style.display = show ? '' : 'none';
+        if (show && !firstVisible) firstVisible = { tab, panel };
+        if (!show && tab.classList.contains('active')) {
+            tab.classList.remove('active');
+            panel.style.display = 'none';
+        }
+    });
+
+    // If active tab was hidden, switch to first visible
+    const hasActive = tabs.some(t => t.classList.contains('active') && t.style.display !== 'none');
+    if (!hasActive && firstVisible) {
+        firstVisible.tab.classList.add('active');
+        firstVisible.panel.style.display = '';
+    }
+
+    if (_reRunSearch) _reRunSearch();
+    if (_syncPanelToolbar) _syncPanelToolbar();
+    syncPathBar();
+}
+
 // -- Add-JSON via paste -----------------------------------------------------
 
 let pendingTab = null;   // { tab, panel } awaiting a paste
@@ -601,6 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPathTooltip(document.body);
     setupPathPreview(document.getElementById('json-panels'), document.getElementById('jp-path-preview'));
     setupSearch();
+    setupFilter();
     setupPasteJson();
 
     // Scroll the tab list horizontally with the mouse wheel
