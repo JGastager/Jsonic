@@ -1,22 +1,12 @@
 # Changelog
 
-## [1.1.3]
+## [1.1.2]
 
 ### What's New
 
 - **🌗 Light mode** — A new appearance toggle in settings lets you switch between dark and light mode. Includes 10 curated light themes sourced from real editor palettes (Material Lighter, VS Code Light+, IntelliJ Light, One Light, Gruvbox Light, Catppuccin Latte, Tokyo Night Light, GitHub Light, Solarized Light, Quiet Light). On first install, the extension detects the system color scheme and defaults accordingly.
 - **🏷️ Schema.org detection** — JSON-LD blocks with a `schema.org` `@context` are automatically recognized. Schema tabs display the `@type` as the tab name and a red "Schema" badge. Supports both single objects and arrays of schema objects.
 - **🔽 Tab filter** — A filter button in the tab bar lets you filter visible tabs by type: All, Schema.org, JSON-LD, Arrays, Objects, or Non-Schema. An active filter is indicated by a blue dot on the button.
-
-### Improvements
-
-- **🔍 Search preserves collapse state** — Search now saves the tree's collapse state before the first query, collapses all nodes, and expands only ancestors of matches. Closing or clearing the search restores the original state.
-- **🎨 Theme dropdown scoped to mode** — The theme selector in settings now only shows themes available for the current appearance mode, with proper display names (e.g. "Catppuccin Latte", "One Light").
-
-## [1.1.2]
-
-### What's New
-
 - **🍞 Path breadcrumb bar** — A sticky breadcrumb bar now appears at the top of the tree on hover, showing the full JSON path to the currently hovered row. Available in both the side panel and the full-page JSON view.
 - **📋 Inline copy buttons** — Each JSON row reveals copy-value and copy-path icon buttons on hover, giving quick one-click access without opening the context menu.
 - **🔍 Advanced search options** — The search bar now includes match-case (`Alt+C`), whole-word (`Alt+W`), and regex (`Alt+R`) toggles. Invalid regex patterns are indicated with a red input highlight.
@@ -25,8 +15,10 @@
 
 ### Improvements
 
-- **Search scoped to active panel** — Search now only highlights matches in the currently visible panel, and expands all collapsed nodes before scanning so no results are missed.
-- **Row hover highlight** — Background highlight on hover now applies to all JSON rows, not just collapsible ones.
+- **🔍 Search preserves collapse state** — Search now saves the tree's collapse state before the first query, collapses all nodes, and expands only ancestors of matches. Closing or clearing the search restores the original state.
+- **🎨 Theme dropdown scoped to mode** — The theme selector in settings now only shows themes available for the current appearance mode, with proper display names (e.g. "Catppuccin Latte", "One Light").
+- **🔍 Search scoped to active panel** — Search now only highlights matches in the currently visible panel, and expands all collapsed nodes before scanning so no results are missed.
+- **✨ Row hover highlight** — Background highlight on hover now applies to all JSON rows, not just collapsible ones.
 
 ## [1.1.1]
 
