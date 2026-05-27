@@ -8,15 +8,21 @@ function applyThemeColors(t) {
     JsonTreeRenderer.applyThemeVars(document.documentElement, t, SETTINGS);
 }
 
+function applyMode(mode) {
+    currentMode = mode;
+    document.documentElement.dataset.jpMode = mode;
+}
+
 function applyTheme(themeKey) {
     currentTheme = themeKey;
+    const modeThemes = THEMES[currentMode] || THEMES.dark;
     if (themeKey === 'custom') {
         chrome.storage.sync.get('jsonParseCustomTheme', (data) => {
-            applyThemeColors(data.jsonParseCustomTheme || THEMES.material);
+            applyThemeColors(data.jsonParseCustomTheme || modeThemes.material);
         });
         return;
     }
-    applyThemeColors(THEMES[themeKey] || THEMES.material);
+    applyThemeColors(modeThemes[themeKey] || modeThemes.material);
 }
 
 const { buildJsonTree, createEl, createSpan, setupContextMenu, setupPathTooltip, setupPathPreview,
@@ -25,6 +31,7 @@ const { buildJsonTree, createEl, createSpan, setupContextMenu, setupPathTooltip,
 const SETTINGS = JsonTreeRenderer.SETTINGS;
 
 let currentTheme = 'material';
+let currentMode = 'dark';
 let pasteReady = false;
 let _refreshSeq = 0;
 let _reRunSearch = null;
@@ -591,8 +598,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(r => r.json())
         .then(themes => {
             THEMES = themes;
-            loadSettings(({ theme, settings }) => {
+            loadSettings(({ theme, settings, mode }) => {
                 Object.assign(SETTINGS, settings);
+                applyMode(mode);
                 applyTheme(theme);
                 applySettings();
                 refresh();
@@ -602,12 +610,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Re-apply theme/settings if changed in options while panel is open
 chrome.storage.onChanged.addListener((changes) => {
+    if (changes.jsonParseMode) applyMode(changes.jsonParseMode.newValue || 'dark');
     if (changes.jsonParseTheme) applyTheme(changes.jsonParseTheme.newValue);
     if (changes.jsonParseCustomTheme && currentTheme === 'custom') applyTheme('custom');
     if (changes.jsonParseSettings) {
         Object.assign(SETTINGS, changes.jsonParseSettings.newValue);
         applyTheme(currentTheme);
         refresh();
+    }
+    if (changes.jsonParseMode && !changes.jsonParseSettings) {
+        applyTheme(currentTheme);
     }
 });
 

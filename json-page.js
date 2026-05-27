@@ -33,35 +33,17 @@
     const explicitTitle = (document.title || '').trim() || (pre?.title || '').trim();
     const pageLabel = explicitTitle || labelFromObj(parsed, getTypeName(parsed));
 
-    // ── Build document title with first-level keys/values appended by |
-    function buildDocTitle(data) {
-        const typeName = getTypeName(data);
-        if (data === null || typeof data !== 'object') return typeName;
-        if (Array.isArray(data)) {
-            const parts = data.slice(0, 5).map(v =>
-                v === null ? 'null'
-                    : typeof v === 'object' ? getTypeName(v)
-                        : String(v));
-            return parts.length ? typeName + ' [ ' + parts.join(', ') + ' ]' : typeName;
-        } else {
-            const entries = Object.entries(data).slice(0, 10).map(([k, v]) => {
-                const val = v === null ? 'null'
-                    : typeof v === 'object' ? getTypeName(v)
-                        : String(v);
-                return k + ': ' + val;
-            });
-            return entries.length ? typeName + ' { ' + entries.join(', ') + ' }' : typeName;
-        }
-    }
-
     // ── Themes (loaded from themes.json) ────────────────────────────────────
     let THEMES = {};
 
     // ── Inject CSS ───────────────────────────────────────────────────────────
-    function injectStyles(themeColors, settings) {
+    function injectStyles(themeColors, settings, mode) {
         const t = themeColors;
         const bracketColor = settings.colorBrackets !== false ? t.bracket : t.punct;
         const braceColor = settings.colorBrackets !== false ? t.brace : t.punct;
+
+        // Apply mode to html element so CSS variables switch
+        document.documentElement.dataset.jpMode = mode || 'dark';
 
         // Load the static stylesheet once
         if (!document.getElementById('jp-stylesheet')) {
@@ -281,27 +263,19 @@
     }
 
     // ── Page takeover ────────────────────────────────────────────────────────
-    function setFavicon() {
-        const existing = document.querySelector('link[rel~="icon"]');
-        if (existing) existing.remove();
-        const link = document.createElement('link');
-        link.rel = 'icon';
-        link.type = 'image/png';
-        link.href = chrome.runtime.getURL(Array.isArray(parsed) ? 'icon-array.png' : 'icon.png');
-        document.head.appendChild(link);
-    }
-
-    function renderPage(themeKey, settings, customColors) {
+    function renderPage(themeKey, settings, customColors, mode) {
+        const m = mode || 'dark';
+        const modeThemes = THEMES[m] || THEMES.dark;
         const t = themeKey === 'custom'
-            ? (customColors || THEMES.material)
-            : (THEMES[themeKey] || THEMES.material);
+            ? (customColors || modeThemes.material)
+            : (modeThemes[themeKey] || modeThemes.material);
         Object.assign(SETTINGS, settings);
-        injectStyles(t, settings);
-        setFavicon();
+        injectStyles(t, settings, m);
 
         // Build root container
         const root = createEl('div');
         root.id = 'jp-page-root';
+        root.dataset.jpMode = m;
 
         // Header
         const header = createEl('div');
@@ -382,9 +356,6 @@
         setupPathTooltip(root);
         setupPathPreview(body);
         _closeSearch = setupSearch(root, header, headerBtns, body, rawBtn);
-
-        // Update page title
-        document.title = buildDocTitle(parsed);
     }
 
     // ── Load settings then render ────────────────────────────────────────────
@@ -392,13 +363,13 @@
         .then(r => r.json())
         .then(themes => {
             THEMES = themes;
-            loadSettings(({ theme, settings, customTheme }) => renderPage(theme, settings, customTheme));
+            loadSettings(({ theme, settings, customTheme, mode }) => renderPage(theme, settings, customTheme, mode));
         });
 
     // Re-render if settings change while the tab is open
     chrome.storage.onChanged.addListener((changes) => {
-        if (changes.jsonParseTheme || changes.jsonParseSettings || changes.jsonParseCustomTheme) {
-            loadSettings(({ theme, settings, customTheme }) => renderPage(theme, settings, customTheme));
+        if (changes.jsonParseTheme || changes.jsonParseSettings || changes.jsonParseCustomTheme || changes.jsonParseMode) {
+            loadSettings(({ theme, settings, customTheme, mode }) => renderPage(theme, settings, customTheme, mode));
         }
     });
 

@@ -14,6 +14,60 @@ const COLOR_FIELDS = [
     { prop: 'punct', label: 'Punctuation' },
 ];
 
+const THEME_LABELS = {
+    dark: {
+        material: 'Material',
+        visualstudio: 'Visual Studio',
+        monokai: 'Monokai',
+        jetbrains: 'JetBrains',
+        brackets: 'Brackets',
+        dracula: 'Dracula',
+        onedark: 'One Dark',
+        nord: 'Nord',
+        gruvbox: 'Gruvbox',
+        catppuccin: 'Catppuccin Mocha',
+        tokyonight: 'Tokyo Night',
+        github: 'GitHub Dark',
+        solarized: 'Solarized Dark',
+    },
+    light: {
+        material: 'Material Lighter',
+        visualstudio: 'Visual Studio Light',
+        jetbrains: 'IntelliJ Light',
+        onedark: 'One Light',
+        gruvbox: 'Gruvbox Light',
+        catppuccin: 'Catppuccin Latte',
+        tokyonight: 'Tokyo Night Light',
+        github: 'GitHub Light',
+        solarized: 'Solarized Light',
+        quietlight: 'Quiet Light',
+    },
+};
+
+function populateThemeDropdown(mode) {
+    const select = document.getElementById('theme');
+    const current = select.value;
+    select.innerHTML = '';
+    const modeThemes = THEMES[mode] || THEMES.dark;
+    for (const key of Object.keys(modeThemes)) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        const labels = THEME_LABELS[mode] || THEME_LABELS.dark;
+        opt.textContent = labels[key] || key;
+        select.appendChild(opt);
+    }
+    const custom = document.createElement('option');
+    custom.value = 'custom';
+    custom.textContent = 'Custom';
+    select.appendChild(custom);
+    // Restore selection if available in new mode, otherwise fall back
+    if (current && modeThemes[current] || current === 'custom') {
+        select.value = current;
+    } else {
+        select.value = DEFAULT_THEME;
+    }
+}
+
 function getCustomColors() {
     const colors = {};
     COLOR_FIELDS.forEach(({ prop }) => {
@@ -77,8 +131,18 @@ function buildCustomPickers() {
     container.appendChild(grid);
 }
 
+function getCurrentMode() {
+    return document.getElementById('mode').value || 'dark';
+}
+
+function applyMode(mode) {
+    document.documentElement.dataset.jpMode = mode;
+}
+
 function applyPreview(themeKey, settings) {
-    const t = themeKey === 'custom' ? getCustomColors() : (THEMES[themeKey] || THEMES[DEFAULT_THEME]);
+    const mode = getCurrentMode();
+    const modeThemes = THEMES[mode] || THEMES.dark;
+    const t = themeKey === 'custom' ? getCustomColors() : (modeThemes[themeKey] || modeThemes[DEFAULT_THEME]);
     const s = settings || DEFAULT_SETTINGS;
     const preview = document.getElementById('theme-preview');
     const quoteChar = s.quoteKeys ? '"' : '';
@@ -117,11 +181,20 @@ function getCurrentSettings() {
 }
 
 function loadSettings() {
-    chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings', 'jsonParseCustomTheme'], (data) => {
+    chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings', 'jsonParseCustomTheme', 'jsonParseMode'], (data) => {
+        const mode = data.jsonParseMode || 'dark';
         const theme = data.jsonParseTheme || DEFAULT_THEME;
         const settings = Object.assign({}, DEFAULT_SETTINGS, data.jsonParseSettings || {});
-        const customColors = data.jsonParseCustomTheme || THEMES[DEFAULT_THEME];
+        const modeThemes = THEMES[mode] || THEMES.dark;
+        const customColors = data.jsonParseCustomTheme || modeThemes[DEFAULT_THEME];
+        document.getElementById('mode').value = mode;
+        applyMode(mode);
+        populateThemeDropdown(mode);
         document.getElementById('theme').value = theme;
+        // Fall back if theme not available in this mode
+        if (document.getElementById('theme').value !== theme) {
+            document.getElementById('theme').value = DEFAULT_THEME;
+        }
         document.getElementById('quoteKeys').checked = settings.quoteKeys;
         document.getElementById('countOnly').checked = settings.countOnly;
         document.getElementById('wrapStrings').checked = settings.wrapStrings;
@@ -135,9 +208,10 @@ function loadSettings() {
 }
 
 function saveSettings() {
+    const mode = getCurrentMode();
     const theme = document.getElementById('theme').value;
     const settings = getCurrentSettings();
-    const toSave = { jsonParseTheme: theme, jsonParseSettings: settings };
+    const toSave = { jsonParseTheme: theme, jsonParseSettings: settings, jsonParseMode: mode };
     if (theme === 'custom') toSave.jsonParseCustomTheme = getCustomColors();
     chrome.storage.sync.set(toSave, () => {
         const status = document.getElementById('status');
@@ -151,7 +225,7 @@ function saveSettings() {
 }
 
 function resetSettings() {
-    chrome.storage.sync.set({ jsonParseTheme: DEFAULT_THEME, jsonParseSettings: DEFAULT_SETTINGS }, () => {
+    chrome.storage.sync.set({ jsonParseTheme: DEFAULT_THEME, jsonParseSettings: DEFAULT_SETTINGS, jsonParseMode: 'dark' }, () => {
         loadSettings();
         const status = document.getElementById('status');
         status.textContent = 'Reset to defaults!';
@@ -170,6 +244,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(themes => {
             THEMES = themes;
             loadSettings();
+            document.getElementById('mode').addEventListener('change', (e) => {
+                applyMode(e.target.value);
+                populateThemeDropdown(e.target.value);
+                showCustomPickers(document.getElementById('theme').value);
+                applyPreview(document.getElementById('theme').value, getCurrentSettings());
+            });
             document.getElementById('theme').addEventListener('change', (e) => {
                 showCustomPickers(e.target.value);
                 applyPreview(e.target.value, getCurrentSettings());

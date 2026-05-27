@@ -650,11 +650,12 @@ const JsonTreeRenderer = (() => {
 
     /** Loads all extension settings from chrome.storage.sync and calls back with { theme, settings, customTheme }. */
     function loadSettings(callback) {
-        chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings', 'jsonParseCustomTheme'], (data) => {
+        chrome.storage.sync.get(['jsonParseTheme', 'jsonParseSettings', 'jsonParseCustomTheme', 'jsonParseMode'], (data) => {
             callback({
                 theme: data.jsonParseTheme || 'material',
                 settings: data.jsonParseSettings || {},
                 customTheme: data.jsonParseCustomTheme || null,
+                mode: data.jsonParseMode || 'dark',
             });
         });
     }

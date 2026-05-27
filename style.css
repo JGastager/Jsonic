@@ -30,6 +30,45 @@
   --json-toggle:  var(--jp-muted);
 }
 
+/* ── Light mode overrides ──────────────────────────────────────────────── */
+
+[data-jp-mode="light"] {
+  --jp-bg:           #ffffff;
+  --jp-dark:         #f5f5f5;
+  --jp-body:         #eeeeee;
+  --jp-hover:        #dddddd;
+  --jp-dimmed:       #888888;
+  --jp-muted:        #666666;
+  --jp-text:         #1a1a1a;
+  --jp-soft:         rgba(0, 0, 0, 0.05);
+  --jp-softer:       rgba(0, 0, 0, 0.075);
+  --jp-guides:       rgba(0, 0, 0, 0.1);
+  --jp-guides-hover: rgba(0, 0, 0, 0.2);
+  --jp-primary:      #0284c7;
+  --jp-primary-muted: rgba(2, 132, 199, 0.2);
+  --jp-primary-hover: rgba(2, 132, 199, 0.3);
+}
+
+[data-jp-mode="light"] .search-opt-sep {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+[data-jp-mode="light"] #jp-path-tooltip {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+[data-jp-mode="light"] #jp-context-menu {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+[data-jp-mode="light"] a svg path {
+  fill: var(--jp-dimmed);
+}
+
+[data-jp-mode="light"] a:hover svg path {
+  fill: var(--jp-muted);
+}
+
 /* ── Design tokens (json-page full-page takeover context) ──────────────── */
 
 #jp-page-root {
