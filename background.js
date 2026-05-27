@@ -1,5 +1,10 @@
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+
+  if (details.reason === 'install') {
+    const prefersDark = self.matchMedia?.('(prefers-color-scheme: dark)').matches ?? true;
+    chrome.storage.sync.set({ jsonParseMode: prefersDark ? 'dark' : 'light' });
+  }
 });
 
 // -- Icon state -------------------------------------------------------------

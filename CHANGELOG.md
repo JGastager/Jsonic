@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.3]
+
+### What's New
+
+- **🌗 Light mode** — A new appearance toggle in settings lets you switch between dark and light mode. Includes 10 curated light themes sourced from real editor palettes (Material Lighter, VS Code Light+, IntelliJ Light, One Light, Gruvbox Light, Catppuccin Latte, Tokyo Night Light, GitHub Light, Solarized Light, Quiet Light). On first install, the extension detects the system color scheme and defaults accordingly.
+- **🏷️ Schema.org detection** — JSON-LD blocks with a `schema.org` `@context` are automatically recognized. Schema tabs display the `@type` as the tab name and a red "Schema" badge. Supports both single objects and arrays of schema objects.
+- **🔽 Tab filter** — A filter button in the tab bar lets you filter visible tabs by type: All, Schema.org, JSON-LD, Arrays, Objects, or Non-Schema. An active filter is indicated by a blue dot on the button.
+
+### Improvements
+
+- **🔍 Search preserves collapse state** — Search now saves the tree's collapse state before the first query, collapses all nodes, and expands only ancestors of matches. Closing or clearing the search restores the original state.
+- **🎨 Theme dropdown scoped to mode** — The theme selector in settings now only shows themes available for the current appearance mode, with proper display names (e.g. "Catppuccin Latte", "One Light").
+
 ## [1.1.2]
 
 ### What's New
