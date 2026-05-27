@@ -3,7 +3,7 @@
     'use strict';
 
     const { buildJsonTree, createEl, createSpan, setupContextMenu, setupPathTooltip, setupPathPreview,
-        getTypeName, getRootTypeBadge, labelFromObj, loadSettings, renderAllDescendants,
+        getTypeName, getRootTypeBadge, labelFromObj, loadSettings, renderAllDescendants, isSchemaJson,
         highlightText, buildSearchRegex } = JsonTreeRenderer;
     const SETTINGS = JsonTreeRenderer.SETTINGS;
 
@@ -317,6 +317,7 @@
         const badge = createEl('span', 'tab-badge');
         badge.id = 'jp-page-badge';
         badge.textContent = getRootTypeBadge(parsed);
+        if (isSchemaJson(parsed)) badge.classList.add('tab-badge-schema');
 
         titleWrap.appendChild(titleEl);
         titleWrap.appendChild(badge);

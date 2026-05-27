@@ -20,7 +20,7 @@ function applyTheme(themeKey) {
 }
 
 const { buildJsonTree, createEl, createSpan, setupContextMenu, setupPathTooltip, setupPathPreview,
-    getTypeName, getRootTypeBadge, loadSettings,
+    getTypeName, getRootTypeBadge, loadSettings, isSchemaJson,
     highlightText, expandAncestors, renderAllDescendants, buildSearchRegex } = JsonTreeRenderer;
 const SETTINGS = JsonTreeRenderer.SETTINGS;
 
@@ -98,16 +98,26 @@ function renderJsonBlocks(jsonBlocks) {
     }
     setPasteReady(false);
 
-    const multiple = jsonBlocks.length > 1;
+    const baseNames = jsonBlocks.map(({ data, label }) => label || getTypeName(data));
+    const nameCounts = new Map();
+    baseNames.forEach((name) => {
+        nameCounts.set(name, (nameCounts.get(name) || 0) + 1);
+    });
+    const seenNameCounts = new Map();
 
     jsonBlocks.forEach(({ data, label }, i) => {
         // -- Tab ----------------------------------------------------------
         const tab = document.createElement('li');
-        const baseName = label || getTypeName(data);
-        const tabName = multiple ? `${baseName} ${i + 1}` : baseName;
+        const baseName = baseNames[i] || label || getTypeName(data);
+        const countForName = nameCounts.get(baseName) || 0;
+        const seenForName = (seenNameCounts.get(baseName) || 0) + 1;
+        seenNameCounts.set(baseName, seenForName);
+        const tabName = countForName > 1 ? `${baseName} ${seenForName}` : baseName;
         const display = tabName.length > 22 ? tabName.slice(0, 22) + '\u2026' : tabName;
         tab.appendChild(document.createTextNode(display));
-        tab.appendChild(createSpan('tab-badge', getRootTypeBadge(data)));
+        const badge = createSpan('tab-badge', getRootTypeBadge(data));
+        if (isSchemaJson(data)) badge.classList.add('tab-badge-schema');
+        tab.appendChild(badge);
         if (i === 0) tab.classList.add('active');
         tabsEl.appendChild(tab);
 
@@ -199,8 +209,29 @@ function refresh() {
                     try { return JSON.parse(text); } catch { return undefined; }
                 }
 
+                function isSchemaOrgContext(contextVal) {
+                    if (typeof contextVal === 'string') {
+                        return /^(https?:\/\/)?(www\.)?schema\.org\/?$/i.test(contextVal.trim());
+                    }
+                    if (Array.isArray(contextVal)) {
+                        return contextVal.some(isSchemaOrgContext);
+                    }
+                    if (contextVal && typeof contextVal === 'object') {
+                        return isSchemaOrgContext(contextVal['@vocab']);
+                    }
+                    return false;
+                }
+
                 function labelFromObj(parsed, fallback) {
                     if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                        if (isSchemaOrgContext(parsed['@context'])) {
+                            const typeVal = parsed['@type'];
+                            if (typeof typeVal === 'string' && typeVal.trim()) return typeVal.trim();
+                            if (Array.isArray(typeVal)) {
+                                const firstType = typeVal.find(v => typeof v === 'string' && v.trim());
+                                if (firstType) return firstType.trim();
+                            }
+                        }
                         for (const key of ['name', 'title']) {
                             const val = parsed[key];
                             if (typeof val === 'string' && val.trim()) return val.trim();
@@ -452,7 +483,7 @@ function createPendingTab() {
     textarea.focus();
     syncPathBar();
 
-    function setBadge(text, error = false) {
+    function setBadge(text, error = false, isSchema = false) {
         let badge = tab.querySelector('.tab-badge');
         if (!badge) {
             badge = createSpan('tab-badge', '');
@@ -460,6 +491,7 @@ function createPendingTab() {
         }
         badge.textContent = text;
         badge.classList.toggle('tab-badge-error', error);
+        badge.classList.toggle('tab-badge-schema', !error && isSchema);
     }
 
     function removeBadge() {
@@ -487,7 +519,7 @@ function createPendingTab() {
         buildJsonTree(tree, parsed, null, 0, true);
         panel.appendChild(tree);
 
-        setBadge(getRootTypeBadge(parsed), false);
+        setBadge(getRootTypeBadge(parsed), false, isSchemaJson(parsed));
         clearError();
 
         pendingTab = null;
@@ -500,7 +532,7 @@ function createPendingTab() {
         if (!raw) return;
         let parsed;
         try { parsed = JSON.parse(raw); } catch (err) {
-            setBadge('!', true);
+            setBadge('!', true, false);
             setError(err.message);
             return;
         }

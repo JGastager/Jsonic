@@ -177,6 +177,11 @@ nav ul li.active::before {
   border-radius: 4px;
 }
 
+.tab-badge.tab-badge-schema {
+  background: rgba(156, 8, 8, 0.2);
+  color: #9C0808;
+}
+
 #add-json-li {
   align-self: self-start;
   margin-left: auto;

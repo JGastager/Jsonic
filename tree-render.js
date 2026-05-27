@@ -609,9 +609,35 @@ const JsonTreeRenderer = (() => {
 
     // -- Label extraction -----------------------------------------------------
 
-    /** Returns the first non-empty name/title string property from a JSON object, or fallback. */
+    function isSchemaOrgContext(contextVal) {
+        if (typeof contextVal === 'string') {
+            return /^(https?:\/\/)?(www\.)?schema\.org\/?$/i.test(contextVal.trim());
+        }
+        if (Array.isArray(contextVal)) {
+            return contextVal.some(isSchemaOrgContext);
+        }
+        if (contextVal && typeof contextVal === 'object') {
+            return isSchemaOrgContext(contextVal['@vocab']);
+        }
+        return false;
+    }
+
+    function isSchemaJson(parsed) {
+        return !!(parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+            && isSchemaOrgContext(parsed['@context']));
+    }
+
+    /** Returns a readable tab label from a JSON object, or fallback. */
     function labelFromObj(parsed, fallback) {
         if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            if (isSchemaJson(parsed)) {
+                const typeVal = parsed['@type'];
+                if (typeof typeVal === 'string' && typeVal.trim()) return typeVal.trim();
+                if (Array.isArray(typeVal)) {
+                    const firstType = typeVal.find(v => typeof v === 'string' && v.trim());
+                    if (firstType) return firstType.trim();
+                }
+            }
             for (const key of ['name', 'title']) {
                 const val = parsed[key];
                 if (typeof val === 'string' && val.trim()) return val.trim();
@@ -640,7 +666,7 @@ const JsonTreeRenderer = (() => {
         buildJsonTree,
         setupContextMenu, setupPathTooltip, setupPathPreview,
         expandAncestors, highlightText, buildSearchRegex,
-        getTypeName, getRootTypeBadge, labelFromObj,
+        getTypeName, getRootTypeBadge, labelFromObj, isSchemaJson,
         loadSettings, renderAllDescendants,
     };
 })();
